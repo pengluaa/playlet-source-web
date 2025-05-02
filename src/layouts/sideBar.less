@@ -1,0 +1,22 @@
+.sider-bar {
+  border-inline-end: 1px solid rgba(5, 5, 5, 0.06);
+}
+
+.sider {
+  background: transparent;
+  :global {
+    .ant-layout-sider-trigger {
+      background: transparent;
+    }
+  }
+}
+
+.menu {
+  height: calc(100vh - 120px);
+  background: transparent;
+  border: none !important;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

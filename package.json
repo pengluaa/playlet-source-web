@@ -1,0 +1,51 @@
+{
+  "private": true,
+  "author": "wuqingsong",
+  "scripts": {
+    "dev": "umi dev",
+    "build": "umi build",
+    "build:test": "cross-env UMI_ENV=test umi build",
+    "postinstall": "umi setup",
+    "setup": "umi setup",
+    "preview": "umi preview --port 9527",
+    "start": "npm run dev"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,less,md,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "prettier --parser=typescript --write"
+    ]
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.1.4",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-react": "^1.0.6",
+    "ahooks": "^3.7.8",
+    "antd": "^5.20.0",
+    "axios": "^1.4.0",
+    "blueimp-md5": "^2.19.0",
+    "crypto-js": "^4.2.0",
+    "dayjs": "^1.11.13",
+    "rc-trigger": "^5.3.4",
+    "react-fast-marquee": "^1.6.0",
+    "react-sortablejs": "^6.1.4",
+    "sortablejs": "^1.15.0",
+    "umi": "^4.0.72",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/blueimp-md5": "^2.18.0",
+    "@types/crypto-js": "^4.2.2",
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "cross-env": "^7.0.3",
+    "lint-staged": "^13.2.3",
+    "prettier": "^3.0.0",
+    "typescript": "^5.1.6"
+  }
+}

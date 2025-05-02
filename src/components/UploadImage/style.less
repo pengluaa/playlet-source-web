@@ -1,0 +1,96 @@
+.upload-base {
+  display: flex;
+  width: 100px;
+  height: 100px;
+  color: @text-color;
+  font-size: 12px;
+  background: #ffffff;
+  border-radius: @border-radius-base;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.image-item-extra {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  z-index: 9;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(26, 26, 26, 0.5);
+    z-index: -1;
+  }
+}
+
+.image-item {
+  position: relative;
+  .upload-base();
+
+  &:hover {
+    > .tools {
+      opacity: 1;
+    }
+  }
+
+  > .file-image {
+    width: 100%;
+    height: 100%;
+    object-fit: scale-down;
+  }
+
+  > .tools {
+    .image-item-extra();
+    opacity: 0;
+    transition: all 0.2s;
+
+    .icon-tool {
+      width: 24px;
+      height: 24px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+  }
+
+  // 进度
+  .upload-progress-box {
+    .image-item-extra();
+    > .upload-progress {
+      position: absolute;
+      width: 80px;
+      bottom: 0;
+      left: 10px;
+    }
+  }
+}
+
+.upload-btn {
+  .upload-base();
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid @border-color;
+  transition: all 0.2s;
+
+  &:hover {
+    color: @primary-color;
+    border-color: @primary-color;
+  }
+
+  > .icon-add {
+    font-size: 16px;
+  }
+}

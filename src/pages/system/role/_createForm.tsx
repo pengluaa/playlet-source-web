@@ -1,0 +1,92 @@
+import { useImperativeHandle, useState, forwardRef } from 'react';
+import { Form, Input, Modal, message } from 'antd';
+import { submit as submitSv } from './service';
+
+interface Props {
+  onOk?: () => void;
+}
+
+const CreateForm = forwardRef((props: Props, ref) => {
+  const [open, setOpen] = useState<boolean>(false);
+  const [view, setView] = useState<boolean>(false);
+  const [title, setTitle] = useState<string>('');
+  const [submitLoading, setSubmitLoading] = useState<boolean>();
+
+  const [form] = Form.useForm();
+
+  const submit = async () => {
+    try {
+      const values = await form.validateFields();
+      setSubmitLoading(true);
+      const { error } = await submitSv(values);
+      setSubmitLoading(false);
+      if (error) return;
+      message.success('提交成功');
+      onCancel();
+      props.onOk?.();
+    } catch (error) {
+      // ..
+    }
+  };
+
+  const onCancel = () => {
+    form.resetFields();
+    setOpen(false);
+  };
+
+  const setFormValues = (values: any) => {
+    values = Object.assign({}, values);
+    form.setFieldsValue(values);
+  };
+
+  useImperativeHandle<any, ModalFormRef>(ref, () => ({
+    add: () => {
+      setTitle('新增');
+      setOpen(true);
+      setView(false);
+    },
+    edit: (values) => {
+      setTitle('编辑');
+      setOpen(true);
+      setView(false);
+      setFormValues(values);
+    },
+    view(values) {
+      setTitle('详情');
+      setView(true);
+      setOpen(true);
+      setFormValues(values);
+    },
+  }));
+
+  return (
+    <Modal
+      title={title}
+      confirmLoading={submitLoading}
+      width={800}
+      open={open}
+      okButtonProps={{ style: { display: view ? 'none' : undefined } }}
+      onCancel={onCancel}
+      onOk={submit}
+    >
+      <Form
+        labelAlign="right"
+        form={form}
+        wrapperCol={{ span: 16 }}
+        labelCol={{ span: 6 }}
+      >
+        <Form.Item label="id" name="id" hidden>
+          <Input placeholder="请输入" />
+        </Form.Item>
+        <Form.Item label="角色名" name="name" rules={[{ required: true }]}>
+          <Input placeholder="请输入" />
+        </Form.Item>
+        <Form.Item label="角色描述" name="remark">
+          <Input.TextArea rows={3} placeholder="请输入" />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+});
+
+export default CreateForm;

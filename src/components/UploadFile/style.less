@@ -1,0 +1,40 @@
+.upload-item {
+  width: 100%;
+  height: 60px;
+  padding: 0 10px;
+  margin-bottom: 8px;
+  background: #f5f6fa;
+  border-radius: @border-radius-base;
+}
+
+.space-item {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.name {
+  .space-item();
+  gap: 8px;
+
+  > .icon-video {
+    min-width: 40px;
+    height: 40px;
+    border-radius: @border-radius-base;
+    overflow: hidden;
+  }
+}
+
+.progress {
+  .space-item();
+  padding: 0 8px;
+  justify-content: end;
+}
+
+.tools {
+  .space-item();
+  cursor: pointer;
+  justify-content: flex-end;
+  font-size: 16px;
+  transform: translateY(1px);
+}
