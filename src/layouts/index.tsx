@@ -11,7 +11,11 @@ import Header from './Header';
 import styles from './index.less';
 import themes from '../themes/var';
 import GlobalContext from '@/mainContext';
-import { getPermisson as getPermissonSv } from '@/service';
+import {
+  getPermisson as getPermissonSv,
+  getFormats as getFormatsSv,
+  getChannels as getChannelsSv,
+} from '@/service';
 
 import 'dayjs/locale/zh-cn';
 import { getUserInfo } from '@/common';
@@ -25,6 +29,8 @@ const GContent = () => {
   const [globalData, setGlobalData] = useState<MainContextValue>({
     userInfo: getUserInfo(),
     permissons: [],
+    formats: [],
+    channels: [],
   });
   const location = useLocation();
   const pathname = location.pathname;
@@ -36,8 +42,24 @@ const GContent = () => {
     setGlobalData(Object.assign({}, globalData));
   };
 
+  const getFormats = async () => {
+    const { error, data } = await getFormatsSv();
+    if (error) return;
+    globalData.formats = data;
+    setGlobalData(Object.assign({}, globalData));
+  };
+
+  const getChannels = async () => {
+    const { error, data } = await getChannelsSv();
+    if (error) return;
+    globalData.channels = data;
+    setGlobalData(Object.assign({}, globalData));
+  };
+
   useEffect(() => {
     getPermisson();
+    getFormats();
+    getChannels();
   }, []);
 
   if (['/login', '/workspace'].includes(pathname)) {

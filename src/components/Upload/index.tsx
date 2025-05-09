@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { message } from 'antd';
 
 import { getExt, getRandomString } from '@/utils/util';
+import { stopPropagation } from '@/utils/event';
 import styles from './upload.less';
 
 const UploadBase: React.FC<React.PropsWithChildren<UploadProps>> = (props) => {
@@ -70,17 +71,18 @@ const UploadBase: React.FC<React.PropsWithChildren<UploadProps>> = (props) => {
     <div
       style={props.style}
       className={className.join(' ')}
-      onClick={() => {
+      onClick={(e) => {
         !props.disabled && uploadRef.current?.click();
       }}
     >
       <input
+        style={{ display: 'none' }}
         type="file"
         ref={uploadRef}
         multiple={multiple}
         accept={accept}
+        onClick={(e) => stopPropagation(e)}
         onChange={onFileChange}
-        style={{ display: 'none' }}
       />
       {props.children}
     </div>

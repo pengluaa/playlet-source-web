@@ -60,6 +60,11 @@ const FileItem = (props: Props) => {
     uploadFile();
   };
 
+  const preview = (url?: string) => {    
+    if (!url) return;
+    previewFile(getFileUrl(url));
+  };
+
   const uploadFile = (): void => {
     // 上传过或者正在上传中，无需上传
     if (file.url || file.status === 'uploading' || file.status === 'done') {
@@ -116,12 +121,11 @@ const FileItem = (props: Props) => {
             )}
             {file.status === 'uploading' && (
               <Progress
-                style={{width: 66}}
-                size="small"
+                style={{ width: 66 }}
+                size={4}
                 status="active"
                 strokeColor="#3361FF"
                 trailColor="#DDDDDD"
-                strokeWidth={4}
                 percent={file.progress}
               />
             )}
@@ -137,14 +141,14 @@ const FileItem = (props: Props) => {
                     删除
                   </Button>
                 </Popconfirm>
-                {/* <Button
-                disabled={props.disabled}
-                size="small"
-                type="link"
-                onClick={() => preview()}
-              >
-                查看
-              </Button> */}
+                <Button
+                  disabled={props.disabled}
+                  size="small"
+                  type="link"
+                  onClick={() => preview(props.file.url)}
+                >
+                  查看
+                </Button>
               </>
             )}
             {file.status === 'uploading' && (

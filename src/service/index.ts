@@ -34,3 +34,15 @@ export const getCaptcha = () => {
     showErrMsg: false,
   });
 };
+// 获取转码格式
+export const getFormats = () => {
+  return request<Format[]>('/formats', {
+    showErrMsg: false,
+  });
+};
+// 获取渠道
+export const getChannels = () => {
+  return request<Channel[]>('/channels', {
+    showErrMsg: false,
+  });
+};

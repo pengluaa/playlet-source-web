@@ -125,7 +125,7 @@ const Administrators = () => {
         <Form.Item label="姓名" name="username">
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="角色名称" name="role_name">
+        <Form.Item label="角色名称" name="roleName">
           <Input placeholder="请输入" />
         </Form.Item>
       </FormSearch>

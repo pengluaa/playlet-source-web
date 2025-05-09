@@ -8,6 +8,7 @@ import {
   Radio,
   TreeSelect,
   message,
+  Switch,
 } from 'antd';
 import { submit as submitSv } from './service';
 
@@ -88,7 +89,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
       onCancel={onCancel}
       onOk={submit}
     >
-      <Form form={form} labelCol={{ span: 4 }} wrapperCol={{ span: 18 }}>
+      <Form form={form} labelCol={{ span: 5 }} wrapperCol={{ span: 18 }}>
         <Form.Item label="id" name="id" hidden>
           <Input placeholder="请输入" />
         </Form.Item>
@@ -102,15 +103,22 @@ const CreateForm = forwardRef((props: Props, ref) => {
         <Form.Item label="名称" name="name" rules={[{ required: true }]}>
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="菜单类型" name="type" rules={[{ required: true }]}>
+        <Form.Item label="类型" name="type" rules={[{ required: true }]}>
           <Select placeholder="请输入">
-            {/* 所有用户都可见 */}
-            <Select.Option value={1}>仅菜单（全部用户可见）</Select.Option>
             {/* 菜单+权限 */}
-            <Select.Option value={2}>菜单+权限</Select.Option>
+            <Select.Option value={2}>菜单</Select.Option>
             {/* 按钮+权限 */}
-            <Select.Option value={3}>权限+按钮</Select.Option>
+            <Select.Option value={3}>按钮</Select.Option>
           </Select>
+        </Form.Item>
+        <Form.Item
+          label="是否显示"
+          name="visiblele"
+          valuePropName="checked"
+          initialValue={true}
+          required
+        >
+          <Switch />
         </Form.Item>
         <Form.Item
           label="按钮权限"

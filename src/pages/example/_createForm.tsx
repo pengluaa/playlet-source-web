@@ -70,7 +70,6 @@ const CreateForm = forwardRef((props: Props, ref) => {
 	  onOk={submit}
 	>
 	  <Form
-		labelAlign="right"
 		form={form}
 		wrapperCol={{ span: 16 }}
 		labelCol={{ span: 6 }}

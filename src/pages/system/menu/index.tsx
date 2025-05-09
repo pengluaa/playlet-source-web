@@ -11,6 +11,7 @@ import {
 import TableMore from '@/components/TableMoreButton';
 import CreateForm from './_createForm';
 import { buildTree, deepCopy } from '@/utils/util';
+import RenderState from '@/components/Render/State';
 
 const Menu = () => {
   const [tableDatas, setTableDatas] = useState<any[]>([]);
@@ -77,10 +78,7 @@ const Menu = () => {
       dataIndex: 'state',
       width: 66,
       render(value) {
-        const open = value == 1;
-        return (
-          <Tag color={open ? 'green' : 'warning'}>{open ? '启用' : '禁用'}</Tag>
-        );
+        return <RenderState value={value} />
       },
     },
     {

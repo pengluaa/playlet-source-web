@@ -23,6 +23,15 @@ interface LayoutProps {
   onChange?: (value: string) => void;
 }
 
+interface Channel {
+  id: number;
+  name: string;
+}
+interface Format {
+  id: number;
+  name: string;
+}
+
 /** 全局变量 */
 interface GlobalData {
   routes: IRoute[];
@@ -33,6 +42,8 @@ interface GlobalData {
 interface MainContextValue {
   userInfo: UserInfo | null;
   permissons: MenuItem[];
+  formats: Format[],
+  channels: Channel[],
 }
 
 interface ReqHeader {

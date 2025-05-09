@@ -49,7 +49,7 @@ const CustomizeTable = (props: CustomizeTableProps<any>) => {
     try {
       setiInnerLoading(true);
       const res = await fetchFn?.({
-        pageNo: pageIndex,
+        page: pageIndex,
         pageSize: pageSize,
         ...(params ?? {}),
         ...(opts ?? {}),

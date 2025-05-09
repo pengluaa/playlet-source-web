@@ -1,5 +1,5 @@
 import { IRoute, history } from 'umi';
-import moment from 'dayjs';
+import dayjs from 'dayjs';
 import md5 from 'blueimp-md5';
 
 import { logout as logoutSv } from '@/service';
@@ -69,11 +69,11 @@ export const getToken = (): string => {
 
 // 获取请求头参数
 export const getRequestHeader = (): ReqHeader => {
-  const timestamp = moment().unix().toString();
+  const timestamp = dayjs().unix().toString();
   return {
     token: globalData.TOKEN,
     timestamp,
-    sign: md5('8K5DJIZGMTWOOEPT' + timestamp),
+    sign: md5('Xq7xe9e3rQMu8hTV' + timestamp),
   };
 };
 

@@ -5,13 +5,20 @@ import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
 import CustomizeTable from '@/components/Table';
 import TableMore from '@/components/TableMoreButton';
+import RenderImage from '@/components/Render/Image';
+import RenderState from '@/components/Render/State';
+import RenderBool from '@/components/Render/Bool';
 import CreateForm from './_createForm';
 
-const Role = () => {
+import { getList as getListSv } from './service';
+import SubsetDrawer from './_subsetDrawer';
+
+const Source = () => {
   const [searchValues, setSearchValues] = useState<any>({});
   const [update, setUpdate] = useState<boolean>(false);
 
   const createRef = useRef<ModalFormRef>(null);
+  const subsetRef = useRef<ModalFormRef>(null);
 
   const refrsh = () => {
     setUpdate(!update);
@@ -23,18 +30,56 @@ const Role = () => {
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 66,
+      fixed: 'left',
     },
     {
       title: '名称',
       dataIndex: 'name',
+      width: 120,
+      ellipsis: true,
     },
     {
       title: '描述',
       dataIndex: 'remark',
+      width: 120,
+      ellipsis: true,
+    },
+    {
+      title: '总集数',
+      dataIndex: 'episodes',
+      width: 66,
+      ellipsis: true,
+    },
+    {
+      title: '封面',
+      dataIndex: 'poster',
+      width: 88,
+      render(value) {
+        return <RenderImage value={value} />;
+      },
+    },
+    {
+      title: '是否有预告片',
+      dataIndex: 'trailer',
+      width: 120,
+      render(value) {
+        return <RenderBool value={value} />
+      },
+    },
+    {
+      title: '启用状态',
+      dataIndex: 'state',
+      width: 88,
+      render(value) {
+        return <RenderState value={value} />;
+      },
     },
     {
       title: '操作',
       dataIndex: 'id',
+      width: 180,
+      fixed: 'right',
       render(value, record) {
         return (
           <TableMore
@@ -48,9 +93,9 @@ const Role = () => {
               },
               {
                 id: 2,
-                text: '查看',
+                text: '子集',
                 onClick() {
-                  createRef.current?.view?.(record);
+                  subsetRef.current?.edit?.(record);
                 },
               },
               {
@@ -85,7 +130,7 @@ const Role = () => {
 
   return (
     <>
-      <PageHeader title="示例" />
+      <PageHeader title="源视频" />
       <FormSearch onChange={setSearchValues}>
         <Form.Item label="名称" name="name">
           <Input placeholder="请输入" />
@@ -94,13 +139,15 @@ const Role = () => {
       <CustomizeTable
         update={update}
         headerContent={<Header />}
+        fetchFn={getListSv}
         params={searchValues}
         columns={columns}
       />
 
       <CreateForm ref={createRef} onOk={refrsh} />
+	  <SubsetDrawer ref={subsetRef} />
     </>
   );
 };
 
-export default Role;
+export default Source;

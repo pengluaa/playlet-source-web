@@ -16,6 +16,7 @@ const RenderFile = (props: Props) => {
     <Button
       type="primary"
       size="small"
+      disabled={!props.value}
       ghost
       icon={<DownloadOutlined style={{ fontSize: 14 }} />}
       onClick={download}
