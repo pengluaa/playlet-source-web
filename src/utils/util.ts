@@ -383,21 +383,28 @@ export const buildTree = (
     map.set(item[idKey], item);
   });
   // 构建树形结构
-	for (let i = 0; i < data.length; i++) {
-		const item = data[i];
-		// 如果 pid 为 0，说明是根节点
-		if (item[pIdKey] === 0) {
-			tree.push(map.get(item[idKey]));
-			continue;
-		}
-		// 否则，找到父节点并将当前项放入其 children 中
-		const pItem = map.get(item[pIdKey]);
-		if (!pItem) continue
-		if (!pItem.children) {
-			pItem.children = [];
-		}
-		pItem.children.push(map.get(item[idKey]));
-	}
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    // 如果 pid 为 0，说明是根节点
+    if (item[pIdKey] === 0) {
+      tree.push(map.get(item[idKey]));
+      continue;
+    }
+    // 否则，找到父节点并将当前项放入其 children 中
+    const pItem = map.get(item[pIdKey]);
+    if (!pItem) continue;
+    if (!pItem.children) {
+      pItem.children = [];
+    }
+    pItem.children.push(map.get(item[idKey]));
+  }
 
   return tree;
+};
+
+/**
+ * @description 邮箱校验
+ */
+export const validateEmail = (email: string): boolean => {
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email);
 };

@@ -41,10 +41,14 @@ const Content = (props: ContentProps) => {
   const modifyPwd = async () => {
     const values = await form.validateFields();
     delete values.confirmPwd;
-    values.oldPassword = md5(values.oldPassword);
-    values.newPassword = md5(values.newPassword);
+    values.oldPassword = md5(values.oldPassword + PWD_SALT);
+    values.newPassword = md5(values.newPassword + PWD_SALT);
     setLoading(true);
     const { error } = await modifyPasswordSv(values);
+    if (error) {
+      setLoading(false);
+      return;
+    }
     logout();
     setLoading(false);
     if (error) return;
@@ -93,14 +97,14 @@ const Content = (props: ContentProps) => {
             rules={[
               {
                 required: true,
-                // validator(rule, value) {
-                //   if (!validatePassword(value)) {
-                //     return Promise.reject(
-                //       '需满足大小写字母+数字组合密码长度大于等于8位',
-                //     );
-                //   }
-                //   return Promise.resolve();
-                // },
+                validator(rule, value) {
+                  if (!validatePassword(value)) {
+                    return Promise.reject(
+                      '需满足大小写字母+数字组合密码长度大于等于8位',
+                    );
+                  }
+                  return Promise.resolve();
+                },
               },
             ]}
           >

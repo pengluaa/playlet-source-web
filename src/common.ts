@@ -1,10 +1,13 @@
 import { IRoute, history } from 'umi';
 import dayjs from 'dayjs';
 import md5 from 'blueimp-md5';
+import CryptoJS from 'crypto-js';
 
 import { logout as logoutSv } from '@/service';
 import { getStorage, setStorage } from './utils/storage';
 
+const AES_decrypt = CryptoJS.AES.decrypt;
+const encUtf8 = CryptoJS.enc.Utf8;
 const TOKEN_KEY = 'TOKEN';
 const USER_INFO_KEY = 'USER_INFO';
 
@@ -67,14 +70,43 @@ export const getToken = (): string => {
   return globalData.TOKEN;
 };
 
+const tokenKey = AES_decrypt(
+  'U2FsdGVkX18x60AcSULZO/pa4QSN74COM5CgeK5Azuo=',
+  '',
+).toString(encUtf8);
+
+const timestampKey = AES_decrypt(
+  'U2FsdGVkX18eAWNb5HFRP1FNhvvqV2qBxyfN+Ul5Ybg=',
+  '',
+).toString(encUtf8);
+
+const signKey = AES_decrypt(
+  'U2FsdGVkX19qpQ31yHY3wngS8EG8SKVDC/Isq4gcFW0=',
+  '',
+).toString(encUtf8);
+
+const signSalt = AES_decrypt(
+  'U2FsdGVkX1+SpuP6wCUJXVv78PuX2a+neunRrO4dajUyFsKPVnsACG/ekO11wGDv',
+  '',
+).toString(encUtf8);
+
+
 // 获取请求头参数
-export const getRequestHeader = (): ReqHeader => {
+export const getRequestHeader = (url: string = ''): ReqHeader => {
   const timestamp = dayjs().unix().toString();
+  const index = url?.indexOf('?');
+  if (index !== -1) {
+    url = url.substring(0, index);
+  }
+  if (!url.startsWith('/')) {
+    url = '/' + url;
+  }
   return {
-    token: globalData.TOKEN,
-    timestamp,
-    sign: md5('Xq7xe9e3rQMu8hTV' + timestamp),
-  };
+    [tokenKey]: getToken(),
+    [timestampKey]: timestamp,
+    [signKey]: md5(url + signSalt + timestamp),
+  } as any;
 };
+
 
 export default globalData;

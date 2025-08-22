@@ -32,7 +32,7 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(function (config) {
-  const headers: any = getRequestHeader();
+  const headers: any = getRequestHeader(config.url);
   for (const key in headers) {
     config.headers.set(key, headers[key]);
   }

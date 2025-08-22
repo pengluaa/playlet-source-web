@@ -42,7 +42,7 @@ const Login = () => {
       const values = await form.validateFields();
       const { error, data } = await loginSv({
         ...values,
-        password: md5(values.password),
+        password: md5(values.password + PWD_SALT),
         captchaId: captchaId,
       });
       setLoading(false);
@@ -83,7 +83,7 @@ const Login = () => {
       <div className={styles.header}></div>
       <div className={styles.footer}></div>
       <div className={styles.contain}>
-        <h1>平台管理中心</h1>
+        <h1>账号登录</h1>
         <Form className={styles.form} form={form}>
           <p className={styles.title}>登录</p>
           <Form.Item
