@@ -32,7 +32,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
       const values = await form.validateFields();
       delete values.confirmPwd;
       if (values.password) {
-        values.password = md5(values.password);
+        values.password = md5(values.password + PWD_SALT);
       }
       setSubmitLoading(true);
       const { error } = await submitSv(values);

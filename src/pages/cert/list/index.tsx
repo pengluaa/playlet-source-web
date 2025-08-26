@@ -1,14 +1,20 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button, Input, TableColumnType, Tag } from 'antd';
+import { Form, Button, Input, TableColumnType, Tag, message } from 'antd';
+import dayjs from 'dayjs';
 import { PlusOutlined } from '@ant-design/icons';
+
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
 import CustomizeTable from '@/components/Table';
 import TableMore from '@/components/TableMoreButton';
 import CreateForm from './_createForm';
 
-import { getList as getListSv } from './service';
-import dayjs from 'dayjs';
+import {
+  getList as getListSv,
+  del as delSv,
+  refresh as refreshSv,
+} from './service';
+import { getRandomString } from '@/utils/util';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
@@ -20,7 +26,27 @@ const List = () => {
     setUpdate(!update);
   };
 
-  const deleteItem = (id: number) => {};
+  const refreshCertStatus = async (id: number) => {
+    const key = getRandomString();
+    message.loading({
+      key,
+      content: `ID【${id}】刷新中..`,
+      duration: 60e3,
+    });
+    const { error } = await refreshSv(id);
+    if (error) return;
+    refrsh();
+    message.success({
+      key,
+      content: `ID【${id}】刷新成功`,
+    });
+  };
+
+  const deleteItem = async (id: number) => {
+    const { error } = await delSv(id);
+    if (error) return;
+    refrsh();
+  };
 
   const columns: TableColumnType<any>[] = [
     {
@@ -71,6 +97,15 @@ const List = () => {
       width: 160,
     },
     {
+      title: '最后检测时间',
+      dataIndex: 'lastDetection',
+      width: 170,
+      render(val) {
+        if (!val) return '-';
+        return dayjs(val).format('YYYY-MM-DD HH:mm:ss');
+      },
+    },
+    {
       title: '操作',
       dataIndex: 'id',
       width: 160,
@@ -88,9 +123,9 @@ const List = () => {
               },
               {
                 id: 2,
-                text: '查看',
+                text: '刷新',
                 onClick() {
-                  createRef.current?.view?.(record);
+                  refreshCertStatus(value);
                 },
               },
               {

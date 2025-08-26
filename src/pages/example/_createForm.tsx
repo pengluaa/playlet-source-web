@@ -71,6 +71,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
 	>
 	  <Form
 		form={form}
+		disabled={view}
 		wrapperCol={{ span: 16 }}
 		labelCol={{ span: 6 }}
 	  >

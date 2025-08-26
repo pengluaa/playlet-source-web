@@ -71,7 +71,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
       onCancel={onCancel}
       onOk={submit}
     >
-      <Form form={form} wrapperCol={{ span: 16 }} labelCol={{ span: 4 }}>
+      <Form form={form} disabled={view} wrapperCol={{ span: 16 }} labelCol={{ span: 4 }}>
         <Form.Item label="id" name="id" hidden>
           <Input placeholder="请输入" />
         </Form.Item>

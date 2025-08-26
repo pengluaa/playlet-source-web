@@ -52,7 +52,7 @@ instance.interceptors.response.use(
     response.status = response.status ?? -1;
     response.data = {
       code: -1,
-      msg,
+      message: msg,
       data: null,
     } as ServerResponse;
     return response;
@@ -87,8 +87,7 @@ export default async function request<T = any>(
       msg: response?.message,
       data: response?.data,
     } as ResponseOk<T>;
-  }
-
+  }  
   if (response?.message && opts?.showErrMsg !== false) {
     message.error(response.message);
   }

@@ -14,9 +14,17 @@ export const submit = (data: any) => {
   return request({ url: '/cert/add', method: 'post', data });
 };
 
-export const del = (id: string) => {
+export const del = (id: number) => {
   return request({
     url: '/cert/del',
+    method: 'delete',
+    data: { id },
+  });
+};
+
+export const refresh = (id: number) => {
+  return request({
+    url: '/cert/refresh',
     method: 'post',
     data: { id },
   });

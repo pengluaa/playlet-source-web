@@ -58,9 +58,10 @@ const Config = () => {
             rules={[{ required: true }]}
           >
             <InputNumber
-              placeholder="请输入"
+              min={1}
               addonBefore="过期前"
               addonAfter="天"
+              placeholder="请输入"
             />
           </Form.Item>
           <Form.Item label={null} wrapperCol={{ offset: 6 }}>
