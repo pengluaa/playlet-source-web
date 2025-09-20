@@ -1,15 +1,16 @@
 import { useImperativeHandle, useState, forwardRef } from 'react';
-import { message, Modal } from 'antd';
+import { Form, message, Modal } from 'antd';
 import CustomizeTable, { CustomizeTableColumType } from '@/components/Table';
 
+import TableMore from '@/components/TableMoreButton';
 import RenderState from '@/components/Render/State';
-import { DeployStatusTag } from '../_deployStatus';
+import FormSearch from '@/components/FormSearch';
+import { DeployStatusSelect, DeployStatusTag } from '../_deployStatus';
 
 import {
   getHistorys as getHistorysSv,
   rollback as rollbackSv,
 } from './service';
-import TableMore from '@/components/TableMoreButton';
 import { getRandomString } from '@/utils/util';
 
 interface Props {
@@ -29,7 +30,8 @@ const DeployHistory = forwardRef((props: Props, ref) => {
       });
       setOpen(true);
     },
-  }));  
+  }));
+
   const rollback = async (itemId: number) => {
     const key = getRandomString();
     message.open({
@@ -42,6 +44,13 @@ const DeployHistory = forwardRef((props: Props, ref) => {
     message.destroy(key);
     if (error) return;
     message.success('回滚成功');
+  };
+
+  const onFormChange = (values: any) => {
+    setParams({
+      ...params,
+      ...values,
+    });
   };
 
   const columns: CustomizeTableColumType<any>[] = [
@@ -145,6 +154,11 @@ const DeployHistory = forwardRef((props: Props, ref) => {
       footer={null}
       onCancel={() => setOpen(false)}
     >
+      <FormSearch colNum={3} onChange={onFormChange}>
+        <Form.Item label="状态" name="status">
+          <DeployStatusSelect />
+        </Form.Item>
+      </FormSearch>
       <CustomizeTable
         columns={columns}
         params={params}
