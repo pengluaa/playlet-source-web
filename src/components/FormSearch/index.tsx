@@ -25,12 +25,6 @@ interface FormSearchProps {
   onChange?: (values?: any) => void;
 }
 
-interface FormItemRender {
-  key: number;
-  render: any;
-  hidden?: boolean;
-}
-
 const XXL = 1600;
 const XL = 1200;
 const searchValueMap = new Map<string, any>(); // 搜索值map
@@ -93,13 +87,14 @@ const getColAndOffset = (colNum: ColNumType | undefined, total: number) => {
   };
 };
 
-const getRenders = (children: any): FormItemRender[] => {
+const getRenders = (children: any) => {
   const childrens: any[] = children?.length > 1 ? children : [children];
-  return childrens.map((render: any, index) => ({
-    key: index,
-    render,
-    hidden: children?.props?.hidden,
-  }));
+  const displayChildren = childrens.filter((render) => !render?.props?.hidden);
+  const hiddenChildren = childrens.filter((render) => render?.props?.hidden);
+  return {
+    displayChildren,
+    hiddenChildren,
+  };
 };
 
 const ExpandButton = (props: { expand?: boolean }) => {
@@ -128,8 +123,8 @@ const FormSearch: React.FC<FormSearchProps> = (props) => {
     save = false,
     formKey = location.pathname,
   } = props;
-  const [childrens] = useState(getRenders(props.children));
-  const total = childrens.filter((item) => !item.hidden).length;
+  const [renders] = useState(getRenders(props.children));
+  const total = renders.displayChildren.length;
   const [colOffset, setColOffset] = useState(
     getColAndOffset(props.colNum, total),
   );
@@ -165,7 +160,7 @@ const FormSearch: React.FC<FormSearchProps> = (props) => {
 
   useEffect(() => {
     reCalcColOffset();
-  }, [childrens]);
+  }, [renders]);
 
   const handleSubmit = (formValues?: any, reset?: boolean) => {
     const values = formValues ?? form.getFieldsValue();
@@ -237,17 +232,24 @@ const FormSearch: React.FC<FormSearchProps> = (props) => {
       <Form autoComplete="off" form={form} onFinish={handleSubmit}>
         <Row gutter={44}>
           {/* 表单 */}
-          {childrens.map((item, index) =>
-            item.hidden || (!expand && index >= colNum - 1) ? (
+          {renders.displayChildren.map((render, index) =>
+            !expand && index >= colNum - 1 ? (
               <Form.Item key={index} hidden noStyle>
-                {item.render}
+                {render}
               </Form.Item>
             ) : (
               <Col key={index} {...colSpan}>
-                {item.render}
+                {render}
               </Col>
             ),
           )}
+          {/* hidden 表单 */}
+          {renders.hiddenChildren.map((render, index) => (
+            <Form.Item key={index} hidden noStyle>
+              {render}
+            </Form.Item>
+          ))}
+
           {/* 操作按钮 */}
           <Col
             {...colSpan}
