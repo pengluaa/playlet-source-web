@@ -23,7 +23,7 @@ const ResourceVideo = () => {
 
   const createRef = useRef<ModalFormRef>(null);
 
-  const refrsh = () => {
+  const refresh = () => {
     setUpdate(!update);
   };
 
@@ -178,7 +178,7 @@ const ResourceVideo = () => {
         columns={columns}
       />
 
-      <CreateForm ref={createRef} onOk={refrsh} />
+      <CreateForm ref={createRef} onOk={refresh} />
     </>
   );
 };

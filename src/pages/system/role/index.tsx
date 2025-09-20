@@ -24,7 +24,7 @@ const Role = () => {
   const [formAuth] = Form.useForm();
   const createRef = useRef<ModalFormRef>(null);
 
-  const refrsh = () => {
+  const refresh = () => {
     setUpdate(!update);
   };
 
@@ -37,7 +37,7 @@ const Role = () => {
     const { error } = await deleteSv(id);
     setLoading(false);
     if (error) return;
-    refrsh();
+    refresh();
   };
 
   const edit = (record: any) => {
@@ -63,7 +63,7 @@ const Role = () => {
     if (error) return;
     message.success('授权成功');
     setVisibleAuth(false);
-    refrsh();
+    refresh();
   };
 
   const columns: TableColumnType<any>[] = [
@@ -146,7 +146,7 @@ const Role = () => {
         fetchFn={getListSv}
       />
 
-      <CreateForm ref={createRef} onOk={refrsh} />
+      <CreateForm ref={createRef} onOk={refresh} />
       <Modal
         title="权限设置"
         maskClosable={false}

@@ -138,6 +138,7 @@ const CustomizeTable = (props: CustomizeTableProps<any>) => {
         columns={getColumns(columns)}
         loading={innerLoading}
         pagination={{
+          style: { marginBottom: 4 },
           showQuickJumper: true,
           current: pageIndex,
           pageSize: pageSize,

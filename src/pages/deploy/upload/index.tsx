@@ -1,11 +1,16 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button, Input, DatePicker } from 'antd';
+import { Form, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
 import CustomizeTable, { CustomizeTableColumType } from '@/components/Table';
 import TableMore from '@/components/TableMoreButton';
+import RenderState from '@/components/Render/State';
+import { DeployStatusSelect, DeployStatusTag } from '../_deployStatus';
 import CreateForm from './_createForm';
+import ProjectSelect from './_projectSelect';
+
+import { getList as getListSv } from './service';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
@@ -17,52 +22,81 @@ const List = () => {
     setUpdate(!update);
   };
 
-  const getList = async (params: unknown) => {
-    console.log(params);
-    return {
-      error: false,
-      code: 1,
-      data: {},
-      msg: '',
-    } as ResponseOk;
-  };
-
   const deleteItem = (id: number) => {};
 
   const columns: CustomizeTableColumType<any>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 88,
     },
     {
-      title: '名称',
-      dataIndex: 'name',
+      title: '项目名称',
+      dataIndex: ['project', 'name'],
+      width: 160,
+      ellipsis: true,
     },
     {
-      title: '描述',
-      dataIndex: 'remark',
+      title: '版本号',
+      dataIndex: 'version',
+      width: 160,
+      ellipsis: true,
+    },
+    {
+      title: '版本描述',
+      dataIndex: 'description',
+      width: 180,
+      ellipsis: true,
+    },
+    {
+      title: 'md5',
+      dataIndex: 'md5',
+      width: 160,
+      ellipsis: true,
+    },
+    {
+      title: 'sha256',
+      dataIndex: 'sha256',
+      width: 160,
+      ellipsis: true,
+    },
+    {
+      title: '是否完成',
+      dataIndex: 'done',
+      width: 120,
+      render(value) {
+        return <RenderState value={value} trueText="完成" falseText="未完成" />;
+      },
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      width: 120,
+      render(value) {
+        return <DeployStatusTag value={value} />;
+      },
+    },
+    {
+      title: '拒绝原因',
+      dataIndex: 'rejectReason',
+      width: 200,
+      ellipsis: true,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      width: 170,
+      timeField: true,
     },
     {
       title: '操作',
       dataIndex: 'id',
+      width: 125,
+      fixed: 'right',
       render(value, record) {
         return (
           <TableMore
             buttons={[
-              {
-                id: 1,
-                text: '编辑',
-                onClick() {
-                  createRef.current?.edit?.(record);
-                },
-              },
-              {
-                id: 2,
-                text: '查看',
-                onClick() {
-                  createRef.current?.view?.(record);
-                },
-              },
               {
                 id: 3,
                 text: '删除',
@@ -95,40 +129,21 @@ const List = () => {
 
   return (
     <>
-      <PageHeader title="示例" />
-      <FormSearch
-        // colNum={4}
-        initialValues={{ name3: '3', name6: '6' }}
-        onChange={setSearchValues}
-      >
-        <Form.Item label="名称1" name="name1">
-          <Input placeholder="请输入" />
+      <PageHeader title="上传项目" />
+      <FormSearch onChange={setSearchValues}>
+        <Form.Item label="项目" name="projectId">
+          <ProjectSelect />
         </Form.Item>
-        <Form.Item label="名称2" name="name2">
-          <DatePicker.RangePicker showTime={false} />
-        </Form.Item>
-        <Form.Item
-          label="名称3"
-          name="name3"
-        >
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称4" name="name4">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称5" name="name5">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称6" name="name6">
-          <Input placeholder="请输入" />
+        <Form.Item label="状态" name="status">
+          <DeployStatusSelect />
         </Form.Item>
       </FormSearch>
       <CustomizeTable
         update={update}
         headerContent={<Header />}
+        fetchFn={getListSv}
         params={searchValues}
         columns={columns}
-        fetchFn={getList}
       />
 
       <CreateForm ref={createRef} onOk={refresh} />

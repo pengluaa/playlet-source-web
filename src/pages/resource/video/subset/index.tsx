@@ -18,7 +18,7 @@ const VideoSubset = () => {
   const id = searchParams.get('id');
   const name = searchParams.get('name');
 
-  const refrsh = () => {
+  const refresh = () => {
     setUpdate(!update);
   };
 
@@ -32,7 +32,7 @@ const VideoSubset = () => {
   const reFormat = async (id: number) => {
     const { error } = await reFormatSv(id);
     if (error) return;
-    refrsh();
+    refresh();
   };
 
   const columns: CustomizeTableColumType<any>[] = [

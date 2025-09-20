@@ -23,6 +23,7 @@ interface UploadImageProps {
   accept?: string;
   max?: number; // 最多上传
   maxSize?: number; // 文件大小
+  dir?: string;
   uploadStart?: () => void; // 开始上传
   uploadFinish?: () => void; // 上传完成
   onChange?: (values?: string[] | string) => void;
@@ -111,8 +112,7 @@ const UploadImage: React.FC<UploadImageProps> = (props) => {
       file.progress = 30;
       const uFile: UploadFile = {
         id: file.uid,
-        name: file.name,
-        size: file.size,
+        dir: props.dir || 'image',
         file: file.file,
         onSuccess(res) {
           file.status = 'done';

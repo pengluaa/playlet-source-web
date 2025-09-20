@@ -22,7 +22,7 @@ const List = () => {
 
   const createRef = useRef<ModalFormRef>(null);
 
-  const refrsh = () => {
+  const refresh = () => {
     setUpdate(!update);
   };
 
@@ -35,7 +35,7 @@ const List = () => {
     });
     const { error } = await refreshSv(id);
     if (error) return;
-    refrsh();
+    refresh();
     message.success({
       key,
       content: `ID【${id}】刷新成功`,
@@ -45,7 +45,7 @@ const List = () => {
   const deleteItem = async (id: number) => {
     const { error } = await delSv(id);
     if (error) return;
-    refrsh();
+    refresh();
   };
 
   const columns: TableColumnType<any>[] = [
@@ -174,7 +174,7 @@ const List = () => {
         columns={columns}
       />
 
-      <CreateForm ref={createRef} onOk={refrsh} />
+      <CreateForm ref={createRef} onOk={refresh} />
     </>
   );
 };

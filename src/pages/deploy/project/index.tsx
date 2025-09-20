@@ -1,50 +1,74 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button, Input, DatePicker } from 'antd';
+import { Form, Button, Input, TableColumnType, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
-import CustomizeTable, { CustomizeTableColumType } from '@/components/Table';
+import CustomizeTable from '@/components/Table';
 import TableMore from '@/components/TableMoreButton';
 import CreateForm from './_createForm';
+
+import { getList as getListSv, del as delSv } from './service';
+import DeployHistory from './_history';
+import ProjectSelect from '../upload/_projectSelect';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
   const [update, setUpdate] = useState<boolean>(false);
 
   const createRef = useRef<ModalFormRef>(null);
+  const historyRef = useRef<ModalFormRef>(null);
 
   const refresh = () => {
     setUpdate(!update);
   };
 
-  const getList = async (params: unknown) => {
-    console.log(params);
-    return {
-      error: false,
-      code: 1,
-      data: {},
-      msg: '',
-    } as ResponseOk;
+  const deleteItem = async (id: number) => {
+    const { error } = await delSv(id);
+    if (error) return;
+    message.success('删除成功');
+    refresh();
   };
 
-  const deleteItem = (id: number) => {};
-
-  const columns: CustomizeTableColumType<any>[] = [
+  const columns: TableColumnType<any>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 88,
     },
     {
-      title: '名称',
+      title: '项目名称',
       dataIndex: 'name',
+      width: 160,
+      ellipsis: true,
     },
     {
-      title: '描述',
+      title: '服务器名称',
+      dataIndex: ['server', 'name'],
+      width: 180,
+      ellipsis: true,
+    },
+    {
+      title: '服务器IP',
+      dataIndex: ['server', 'host'],
+      width: 160,
+      ellipsis: true,
+    },
+    {
+      title: '目录',
+      dataIndex: 'dir',
+      width: 180,
+    },
+    {
+      title: '备注',
       dataIndex: 'remark',
+      width: 180,
+      ellipsis: true,
     },
     {
       title: '操作',
       dataIndex: 'id',
+      width: 160,
+      fixed: 'right',
       render(value, record) {
         return (
           <TableMore
@@ -58,9 +82,9 @@ const List = () => {
               },
               {
                 id: 2,
-                text: '查看',
+                text: '部署历史',
                 onClick() {
-                  createRef.current?.view?.(record);
+                  historyRef.current?.view?.(record);
                 },
               },
               {
@@ -95,43 +119,22 @@ const List = () => {
 
   return (
     <>
-      <PageHeader title="示例" />
-      <FormSearch
-        // colNum={4}
-        initialValues={{ name3: '3', name6: '6' }}
-        onChange={setSearchValues}
-      >
-        <Form.Item label="名称1" name="name1">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称2" name="name2">
-          <DatePicker.RangePicker showTime={false} />
-        </Form.Item>
-        <Form.Item
-          label="名称3"
-          name="name3"
-        >
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称4" name="name4">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称5" name="name5">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称6" name="name6">
-          <Input placeholder="请输入" />
+      <PageHeader title="项目管理" />
+      <FormSearch onChange={setSearchValues}>
+        <Form.Item label="名称" name="id">
+          <ProjectSelect />
         </Form.Item>
       </FormSearch>
       <CustomizeTable
         update={update}
         headerContent={<Header />}
+        fetchFn={getListSv}
         params={searchValues}
         columns={columns}
-        fetchFn={getList}
       />
 
       <CreateForm ref={createRef} onOk={refresh} />
+      <DeployHistory ref={historyRef} />
     </>
   );
 };

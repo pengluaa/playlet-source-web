@@ -1,8 +1,7 @@
 import { useImperativeHandle, useState, forwardRef } from 'react';
-import { Form, Input, Modal, message } from 'antd';
-import UploadImage from '@/components/UploadImage';
-import UploadFile from '@/components/UploadFile';
+import { Form, Input, InputNumber, Modal, message } from 'antd';
 
+import { submit as submitSv } from './service';
 interface Props {
   onOk?: () => void;
 }
@@ -19,8 +18,9 @@ const CreateForm = forwardRef((props: Props, ref) => {
     try {
       const values = await form.validateFields();
       setSubmitLoading(true);
-      console.log(values);
+      const { error } = await submitSv(values);
       setSubmitLoading(false);
+      if (error) return;
       message.success('提交成功');
       onCancel();
       props.onOk?.();
@@ -63,7 +63,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
     <Modal
       title={title}
       confirmLoading={submitLoading}
-      width={800}
+      width={600}
       open={open}
       okButtonProps={{
         style: { display: type === 'view' ? 'none' : undefined },
@@ -75,7 +75,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
         form={form}
         disabled={type === 'view'}
         wrapperCol={{ span: 16 }}
-        labelCol={{ span: 6 }}
+        labelCol={{ span: 4 }}
       >
         <Form.Item label="id" name="id" hidden>
           <Input placeholder="请输入" />
@@ -83,14 +83,22 @@ const CreateForm = forwardRef((props: Props, ref) => {
         <Form.Item label="名称" name="name" rules={[{ required: true }]}>
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="描述" name="remark">
-          <Input.TextArea rows={3} placeholder="请输入" />
+        <Form.Item label="服务器地址" name="host" rules={[{ required: true }]}>
+          <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="图片" name="img">
-          <UploadImage multiple={false} />
+        <Form.Item label="端口" name="port" rules={[{ required: true }]}>
+          <InputNumber placeholder="请输入" min={0} precision={0} />
         </Form.Item>
-        <Form.Item label="文件" name="file">
-          <UploadFile />
+        <Form.Item label="用户名" name="username" rules={[{ required: true }]}>
+          <Input placeholder="请输入" />
+        </Form.Item>
+        <Form.Item
+          hidden={type === 'view'}
+          label="密码"
+          name="password"
+          rules={[{ required: type === 'add' }]}
+        >
+          <Input placeholder="请输入" />
         </Form.Item>
       </Form>
     </Modal>

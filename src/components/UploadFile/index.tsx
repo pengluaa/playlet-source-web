@@ -17,6 +17,7 @@ interface UploadFileProps {
   accept?: string;
   max?: number; // 最多上传
   maxSize?: number; // 文件大小
+  dir?: string;
   onChange?: (values?: string[] | string) => void;
 }
 
@@ -110,6 +111,7 @@ const UploadFile = (props: UploadFileProps) => {
         fileList.map((file, index) => (
           <Row key={file.uid} className={styles.uploadItem} gutter={0}>
             <FileItem
+              dir={props.dir}
               file={file}
               disabled={props.disabled}
               onDelete={() => onDelete(index)}

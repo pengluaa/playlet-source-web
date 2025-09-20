@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { GetProp, Select, Tag } from 'antd';
-import { getFormats as getFormatsSv } from '@/service';
 import MainContext from '@/mainContext';
 
 interface Props extends FormItemChildProps<number[]> {

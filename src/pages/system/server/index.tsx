@@ -1,11 +1,18 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button, Input, DatePicker } from 'antd';
+import { Form, Button, Input, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
 import CustomizeTable, { CustomizeTableColumType } from '@/components/Table';
 import TableMore from '@/components/TableMoreButton';
+
 import CreateForm from './_createForm';
+import { ServerStatusTag } from './_serverStatus';
+import {
+  getList as getListSv,
+  del as delSv,
+  refreshStatus as refreshStatusSv,
+} from './service';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
@@ -17,34 +24,79 @@ const List = () => {
     setUpdate(!update);
   };
 
-  const getList = async (params: unknown) => {
-    console.log(params);
-    return {
-      error: false,
-      code: 1,
-      data: {},
-      msg: '',
-    } as ResponseOk;
+  const deleteItem = async (id: number) => {
+    const { error } = await delSv(id);
+    if (error) return;
+    message.success('删除成功');
   };
-
-  const deleteItem = (id: number) => {};
+  const refreshConn = async (id: number) => {
+    const { error } = await refreshStatusSv(id);
+    if (error) return;
+    message.success('操作成功');
+  };
 
   const columns: CustomizeTableColumType<any>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
+      width: 88,
     },
     {
       title: '名称',
       dataIndex: 'name',
+      width: 120,
     },
     {
-      title: '描述',
-      dataIndex: 'remark',
+      title: '服务器地址',
+      dataIndex: 'host',
+      width: 180,
+    },
+    {
+      title: '端口',
+      dataIndex: 'port',
+      width: 120,
+    },
+    {
+      title: '用户名',
+      dataIndex: 'username',
+      width: 160,
+    },
+    {
+      title: '状态',
+      dataIndex: 'status',
+      width: 120,
+      render(value) {
+        return <ServerStatusTag value={value} />;
+      },
+    },
+    {
+      title: '连接时间',
+      dataIndex: 'connAt',
+      timeField: true,
+      width: 170,
+    },
+    {
+      title: '使用范围',
+      dataIndex: 'scope',
+      width: 120,
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      width: 170,
+      timeField: true,
+    },
+    {
+      title: '更新时间',
+      dataIndex: 'updatedAt',
+      width: 170,
+      timeField: true,
     },
     {
       title: '操作',
       dataIndex: 'id',
+      width: 160,
+      fixed: 'right',
       render(value, record) {
         return (
           <TableMore
@@ -58,9 +110,9 @@ const List = () => {
               },
               {
                 id: 2,
-                text: '查看',
+                text: '刷新',
                 onClick() {
-                  createRef.current?.view?.(record);
+                  refreshConn(value);
                 },
               },
               {
@@ -95,40 +147,24 @@ const List = () => {
 
   return (
     <>
-      <PageHeader title="示例" />
-      <FormSearch
-        // colNum={4}
-        initialValues={{ name3: '3', name6: '6' }}
-        onChange={setSearchValues}
-      >
-        <Form.Item label="名称1" name="name1">
+      <PageHeader title="服务器管理" />
+      <FormSearch onChange={setSearchValues}>
+        <Form.Item label="名称" name="name">
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="名称2" name="name2">
-          <DatePicker.RangePicker showTime={false} />
-        </Form.Item>
-        <Form.Item
-          label="名称3"
-          name="name3"
-        >
+        <Form.Item label="服务器地址" name="host">
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="名称4" name="name4">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称5" name="name5">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称6" name="name6">
+        <Form.Item label="用户名" name="username">
           <Input placeholder="请输入" />
         </Form.Item>
       </FormSearch>
       <CustomizeTable
         update={update}
         headerContent={<Header />}
+        fetchFn={getListSv}
         params={searchValues}
         columns={columns}
-        fetchFn={getList}
       />
 
       <CreateForm ref={createRef} onOk={refresh} />

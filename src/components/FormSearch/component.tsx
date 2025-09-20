@@ -1,4 +1,4 @@
-import { Form, Space, Checkbox } from 'antd';
+import { Space, Checkbox } from 'antd';
 
 const CheckboxGroup = Checkbox.Group;
 

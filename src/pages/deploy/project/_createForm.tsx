@@ -1,7 +1,7 @@
 import { useImperativeHandle, useState, forwardRef } from 'react';
 import { Form, Input, Modal, message } from 'antd';
-import UploadImage from '@/components/UploadImage';
-import UploadFile from '@/components/UploadFile';
+import ServerSelect from './_serverSelect';
+import { submit as submitSv } from './service';
 
 interface Props {
   onOk?: () => void;
@@ -9,7 +9,7 @@ interface Props {
 
 const CreateForm = forwardRef((props: Props, ref) => {
   const [open, setOpen] = useState<boolean>(false);
-  const [type, setType] = useState<CreateFormType>('add');
+  const [view, setView] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [submitLoading, setSubmitLoading] = useState<boolean>();
 
@@ -19,8 +19,9 @@ const CreateForm = forwardRef((props: Props, ref) => {
     try {
       const values = await form.validateFields();
       setSubmitLoading(true);
-      console.log(values);
+      const { error } = await submitSv(values);
       setSubmitLoading(false);
+      if (error) return;
       message.success('提交成功');
       onCancel();
       props.onOk?.();
@@ -43,17 +44,17 @@ const CreateForm = forwardRef((props: Props, ref) => {
     add: () => {
       setTitle('新增');
       setOpen(true);
-      setType('add');
+      setView(false);
     },
     edit: (values) => {
       setTitle('编辑');
       setOpen(true);
-      setType('edit');
+      setView(false);
       setFormValues(values);
     },
     view(values) {
       setTitle('详情');
-      setType('view');
+      setView(true);
       setOpen(true);
       setFormValues(values);
     },
@@ -63,34 +64,32 @@ const CreateForm = forwardRef((props: Props, ref) => {
     <Modal
       title={title}
       confirmLoading={submitLoading}
-      width={800}
+      width={600}
       open={open}
-      okButtonProps={{
-        style: { display: type === 'view' ? 'none' : undefined },
-      }}
+      okButtonProps={{ style: { display: view ? 'none' : undefined } }}
       onCancel={onCancel}
       onOk={submit}
     >
       <Form
         form={form}
-        disabled={type === 'view'}
+        disabled={view}
         wrapperCol={{ span: 16 }}
-        labelCol={{ span: 6 }}
+        labelCol={{ span: 4 }}
       >
         <Form.Item label="id" name="id" hidden>
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="名称" name="name" rules={[{ required: true }]}>
+        <Form.Item label="项目名称" name="name" rules={[{ required: true }]}>
           <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="描述" name="remark">
-          <Input.TextArea rows={3} placeholder="请输入" />
+        <Form.Item label="服务器" name="serverId" rules={[{ required: true }]}>
+          <ServerSelect />
         </Form.Item>
-        <Form.Item label="图片" name="img">
-          <UploadImage multiple={false} />
+        <Form.Item label="目录" name="dir" rules={[{ required: true }]}>
+          <Input placeholder="请输入" />
         </Form.Item>
-        <Form.Item label="文件" name="file">
-          <UploadFile />
+        <Form.Item label="备注" name="remark">
+          <Input.TextArea rows={2} maxLength={1024} placeholder="请输入" />
         </Form.Item>
       </Form>
     </Modal>

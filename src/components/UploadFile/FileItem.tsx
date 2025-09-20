@@ -17,6 +17,7 @@ import styles from './style.less';
 
 interface Props {
   file: FileInfo;
+  dir?: string;
   disabled?: boolean;
   onDelete?: () => void;
   onOk?: (fileUrl: string) => void;
@@ -76,9 +77,8 @@ const FileItem = (props: Props) => {
     file.progress = 20;
     const uFile: UploadFile = {
       id: file.uid,
-      name: file.name,
-      size: file.size,
       file: file.file,
+      dir: props.dir,
       onprogress(percent) {
         file.progress = percent;
         setFile({ ...file });

@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Form,
-  Button,
-  Card,
-  Row,
-  Col,
-  Space,
-  Popover,
-  FormInstance,
-} from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Form, Button, Card, Row, Col, Space, FormInstance } from 'antd';
+import { useThrottleFn } from 'ahooks';
 import { UpOutlined, DownOutlined } from '@ant-design/icons';
-import { TreeItem } from './component';
-import { arrTimeToString, formatTime } from '@/utils/util';
-
-import styles from './style.less';
-import { useDebounceFn } from 'ahooks';
 import dayjs from 'dayjs';
 
-type ColLenType = number | { xxl: number; xl: number; sm: number };
+import { arrTimeToString, formatTime } from '@/utils/util';
+import styles from './style.less';
+
+type ColNumType = number | { xxl: number; xl: number; sm: number };
 
 interface FormSearchProps {
   save?: boolean; // 保存筛选参数
-  colLen?: ColLenType;
+  colNum?: ColNumType;
   formKey?: string; // 保存筛选参数key 默认location.pathname
   form?: FormInstance;
   initialValues?: any; // 搜索表单默认值
@@ -35,16 +25,100 @@ interface FormSearchProps {
   onChange?: (values?: any) => void;
 }
 
-interface FormListType {
-  showIndex?: number;
+interface FormItemRender {
+  key: number;
+  render: any;
   hidden?: boolean;
-  children?: any;
 }
 
 const XXL = 1600;
 const XL = 1200;
 const searchValueMap = new Map<string, any>(); // 搜索值map
-const expandMap = new Map<string, boolean>(); // 展开map
+const expandMap = new Map<string, boolean>(); // 筛选项展开map
+
+// col span
+const getColSpan = (colNum?: ColNumType) => {
+  // 默认展示配置 xxl: 4个 xl: 3个 sm: 2个
+  const colSpan = { xxl: { span: 6 }, xl: { span: 8 }, sm: { span: 12 } };
+  // get span
+  const getSpanByCol = (col: number) => 24 / col;
+  // 自定义
+  if (colNum) {
+    if (typeof colNum === 'number') {
+      const span = getSpanByCol(colNum);
+      colSpan.xxl.span = span;
+      colSpan.xl.span = span;
+      colSpan.sm.span = span;
+    } else {
+      if (colNum.xxl) {
+        colSpan.xxl.span = getSpanByCol(colNum.xxl);
+      }
+      if (colNum.xl) {
+        colSpan.sm.span = getSpanByCol(colNum.xl);
+      }
+      if (colNum.sm) {
+        colSpan.xl.span = getSpanByCol(colNum.xl);
+      }
+    }
+  }
+  return colSpan;
+};
+
+const getColAndOffset = (colNum: ColNumType | undefined, total: number) => {
+  const VW = window.innerWidth;
+  const colSpan = getColSpan(colNum);
+  // get span
+  const getColBySpan = (span: number) => 24 / span;
+
+  let col = 0; // 单行展示个数
+  let span = 0; // col对应span
+  let expandOffset = 0; // 展开offset
+  let collapsedOffset = 0; // 折叠offset
+  // span
+  if (VW >= XXL) {
+    span = colSpan.xxl.span;
+  } else if (VW >= XL) {
+    span = colSpan.xl.span;
+  } else {
+    span = colSpan.sm.span;
+  }
+  col = getColBySpan(span);
+  expandOffset = (col - (total % col) - 1) * span; // (total % col) 多出数量
+  collapsedOffset = total >= col ? 0 : (col - total - 1) * span;
+  return {
+    col,
+    expandOffset,
+    collapsedOffset,
+    colSpan,
+  };
+};
+
+const getRenders = (children: any): FormItemRender[] => {
+  const childrens: any[] = children?.length > 1 ? children : [children];
+  return childrens.map((render: any, index) => ({
+    key: index,
+    render,
+    hidden: children?.props?.hidden,
+  }));
+};
+
+const ExpandButton = (props: { expand?: boolean }) => {
+  if (props.expand) {
+    return (
+      <>
+        <span>收起</span>
+        <UpOutlined />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <span>展开</span>
+      <DownOutlined />
+    </>
+  );
+};
 
 const FormSearch: React.FC<FormSearchProps> = (props) => {
   const {
@@ -54,100 +128,44 @@ const FormSearch: React.FC<FormSearchProps> = (props) => {
     save = false,
     formKey = location.pathname,
   } = props;
-
-  // const colSpan = { xxl: { span: 6 }, xl: { span: 8 }, sm: { span: 12 } };
-
-  let children: any[] =
-    props.children?.length > 1 ? props.children : [props.children];
-
-  // 过滤隐藏内容
-  children = children.filter((item) => {
-    if (item === false) {
-      return false;
-    }
-    if (item.props.hidden === true) {
-      return false;
-    }
-    return true;
-  });
-
-  let realChildLen = children.length;
+  const [childrens] = useState(getRenders(props.children));
+  const total = childrens.filter((item) => !item.hidden).length;
+  const [colOffset, setColOffset] = useState(
+    getColAndOffset(props.colNum, total),
+  );
   const [expand, setExpand] = useState<boolean>(!!expandMap.get(formKey));
-  const [colLen, setColLen] = useState<number>(4); // 每列个数
-  const [showLen, setShowLen] = useState<number>(realChildLen); // 显示个数
-  const [showKeys, setShowKeys] = useState<number[]>(); // 勾选筛选
-  const [formList, setFormList] = useState<FormListType[]>([]); // form list
-  const [colSpan, setColSpan] = useState<any>();
-  const [offset, setOffset] = useState<number>();
+  const colNum = useMemo(() => colOffset.col, [colOffset]);
+  const colSpan = useMemo(() => colOffset.colSpan, [colOffset]);
 
   const form = props.form ?? Form.useForm()[0]; // form
-  const showFilter = realChildLen > 12; // 筛选条件
-  const showExpand = showLen >= colLen; // 显示展开按钮
+  const showExpand = total >= colOffset.col; // 显示展开按钮
 
-  // 计算offset
-  const calcOffset = (): void => {
-    let offset = 0;
-    const span = 24 / colLen;
-    if (showLen >= colLen && !expand) {
-      offset = colLen - 1;
-    } else {
-      offset = showLen % colLen;
-    }
-    const val = (colLen - offset - 1) * span;
-    setOffset(val);
+  const reCalcColOffset = () => {
+    setColOffset(getColAndOffset(props.colNum, total));
   };
+
   // 窗口变化
-  const { run: onDebounceResize } = useDebounceFn(
-    (initColSpan) => {
-      const VW = window.innerWidth;
-      if (VW >= XXL) {
-        setColLen(24 / initColSpan.xxl.span);
-      } else if (VW > XL) {
-        setColLen(24 / initColSpan.xl.span);
-      } else {
-        setColLen(24 / initColSpan.sm.span);
-      }
-    },
-    { wait: 100 },
-  );
-
-  // 筛选字段
-  const handleTreeChange = (values: number[]) => {
-    setShowLen(values.length);
-    setShowKeys(values);
-  };
+  const { run: onResize } = useThrottleFn(reCalcColOffset, {
+    wait: 100,
+  });
 
   // 重置
   const handleReset = () => {
+    const initialValues = Object.assign({}, props.initialValues);
     onReset?.();
     form.resetFields();
-    form.setFieldsValue(props.initialValues);
-    handleSubmit({ ...props.initialValues }, true);
+    setTimeout(() => {
+      form.setFieldsValue(initialValues);
+    }, 0);
+    handleSubmit(initialValues, true);
     if (save) {
       searchValueMap.delete(formKey);
     }
   };
 
-  // form list
-  const handleFormList = () => {
-    const formList: FormListType[] = [];
-    let i = 0;
-
-    children.map((item: any, index: number) => {
-      const checked = showKeys?.some((k) => k === index) ?? true;
-      let hidden = true;
-      if (expand) {
-        hidden = !checked;
-      } else {
-        hidden = i >= colLen - 1;
-      }
-      if (checked) {
-        formList.push({ showIndex: index, hidden: hidden, children: item });
-        i++;
-      }
-    });
-    setFormList(formList);
-  };
+  useEffect(() => {
+    reCalcColOffset();
+  }, [childrens]);
 
   const handleSubmit = (formValues?: any, reset?: boolean) => {
     const values = formValues ?? form.getFieldsValue();
@@ -173,33 +191,15 @@ const FormSearch: React.FC<FormSearchProps> = (props) => {
     onChange?.(values);
   };
 
-  useEffect(() => {
-    if (expand !== void 0) {
-      expandMap.set(formKey, expand);
-    }
-    handleFormList();
-    calcOffset();
-  }, [showKeys, colLen, expand, props.children]);
+  const triggerExpand = () => {
+    const newVal = !expand;
+    setExpand(newVal);
+    expandMap.set(formKey, newVal);
+  };
 
   useEffect(() => {
-    let initColSpan: any = {
-      xxl: { span: 6 },
-      xl: { span: 8 },
-      sm: { span: 12 },
-    };
-
-    // span
-    const getSpan = (col: number): number => {
-      return 24 / col;
-    };
-
-    // onResize
-    const onResize = () => {
-      onDebounceResize(initColSpan);
-    };
-
     let formValues: any = null;
-    // 保存筛选项
+    // 开启保存筛选表单
     if (save) {
       formValues = searchValueMap.get(formKey);
     }
@@ -215,27 +215,9 @@ const FormSearch: React.FC<FormSearchProps> = (props) => {
       form.setFieldsValue({ ...formValues });
       handleSubmit({ ...formValues });
     }
-
-    // 设置col
-    if (props.colLen) {
-      if (typeof props.colLen === 'number') {
-        initColSpan.xxl.span = getSpan(props.colLen);
-        initColSpan.xl.span = getSpan(props.colLen);
-        initColSpan.sm.span = getSpan(props.colLen);
-      } else {
-        if (props.colLen.xxl) {
-          initColSpan.xxl.span = getSpan(props.colLen.xxl);
-          initColSpan.xl.span = getSpan(props.colLen.xl);
-          initColSpan.sm.span = getSpan(props.colLen.sm);
-        }
-      }
-    }
-    setColSpan({ ...initColSpan });
-    onResize();
     window.addEventListener('resize', onResize);
     return () => {
       window.removeEventListener('resize', onResize);
-      initColSpan = null;
     };
   }, []);
 
@@ -255,17 +237,22 @@ const FormSearch: React.FC<FormSearchProps> = (props) => {
       <Form autoComplete="off" form={form} onFinish={handleSubmit}>
         <Row gutter={44}>
           {/* 表单 */}
-          {formList?.map((item, index: number) => (
-            <Col
-              style={{ display: item.hidden ? 'none' : null }}
-              key={item.showIndex}
-              {...colSpan}
-            >
-              {item.children}
-            </Col>
-          ))}
+          {childrens.map((item, index) =>
+            item.hidden || (!expand && index >= colNum - 1) ? (
+              <Form.Item key={index} hidden noStyle>
+                {item.render}
+              </Form.Item>
+            ) : (
+              <Col key={index} {...colSpan}>
+                {item.render}
+              </Col>
+            ),
+          )}
           {/* 操作按钮 */}
-          <Col {...colSpan} offset={offset}>
+          <Col
+            {...colSpan}
+            offset={expand ? colOffset.expandOffset : colOffset.collapsedOffset}
+          >
             <Form.Item style={{ textAlign: 'end' }}>
               <Space size={8}>
                 <Button onClick={handleReset} htmlType="reset">
@@ -274,28 +261,13 @@ const FormSearch: React.FC<FormSearchProps> = (props) => {
                 <Button type="primary" htmlType="submit">
                   查询
                 </Button>
-                <Form.Item noStyle hidden={!showFilter}>
-                  <Popover
-                    content={
-                      <TreeItem
-                        options={children}
-                        onChange={handleTreeChange}
-                      />
-                    }
-                    placement="bottom"
-                    trigger="click"
-                  >
-                    <Button type="primary">更多筛选</Button>
-                  </Popover>
-                </Form.Item>
                 <Form.Item noStyle hidden={!showExpand}>
                   <Space
                     size={4}
                     className={styles.expand}
-                    onClick={() => setExpand(!expand)}
+                    onClick={() => triggerExpand()}
                   >
-                    <span>{expand ? '收起' : '展开'}</span>
-                    {expand ? <UpOutlined /> : <DownOutlined />}
+                    <ExpandButton expand={expand} />
                   </Space>
                 </Form.Item>
               </Space>

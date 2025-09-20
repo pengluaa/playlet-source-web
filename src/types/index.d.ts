@@ -42,8 +42,8 @@ interface GlobalData {
 interface MainContextValue {
   userInfo: UserInfo | null;
   permissons: MenuItem[];
-  formats: Format[],
-  channels: Channel[],
+  formats: Format[];
+  channels: Channel[];
 }
 
 interface ReqHeader {
@@ -119,12 +119,12 @@ interface MenuItem {
   icon?: string;
   name: string;
   route?: string;
-  permission?: PermissionType; 
+  permission?: PermissionType;
   sort?: number;
 }
 
-interface MenuTree extends MenuItem{
-  children?: MenuItem[]
+interface MenuTree extends MenuItem {
+  children?: MenuItem[];
 }
 
 interface ModalFormRef<T = any> {
@@ -143,3 +143,5 @@ interface ListParams extends Pager {
   order?: string;
   [key: string]: any;
 }
+
+type CreateFormType = 'add' | 'edit' | 'view';
