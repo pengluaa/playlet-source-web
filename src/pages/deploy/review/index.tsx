@@ -129,7 +129,7 @@ const List = () => {
         <Form.Item label="项目" name="projectId">
           <ProjectSelect />
         </Form.Item>
-        <Form.Item label="状态" name="status" hidden>
+        <Form.Item label="状态" name="status">
           <DeployStatusSelect />
         </Form.Item>
       </FormSearch>

@@ -21,16 +21,11 @@ const DeployHistory = forwardRef((props: Props, ref) => {
   const [open, setOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>();
   const [params, setParams] = useState<any>();
+  const [update, setUpdate] = useState<boolean>(false);
 
-  useImperativeHandle<any, ModalFormRef>(ref, () => ({
-    view(values) {
-      setTitle(values.name);
-      setParams({
-        id: values.id,
-      });
-      setOpen(true);
-    },
-  }));
+  const refresh = () => {
+    setUpdate(!update);
+  };
 
   const rollback = async (itemId: number) => {
     const key = getRandomString();
@@ -43,7 +38,8 @@ const DeployHistory = forwardRef((props: Props, ref) => {
     const { error } = await rollbackSv(itemId);
     message.destroy(key);
     if (error) return;
-    message.success('回滚成功');
+    message.success('回滚操作成功，请关注部署状态');
+    refresh();
   };
 
   const onFormChange = (values: any) => {
@@ -52,6 +48,16 @@ const DeployHistory = forwardRef((props: Props, ref) => {
       ...values,
     });
   };
+
+  useImperativeHandle<any, ModalFormRef>(ref, () => ({
+    view(values) {
+      setTitle(values.name);
+      setParams({
+        id: values.id,
+      });
+      setOpen(true);
+    },
+  }));
 
   const columns: CustomizeTableColumType<any>[] = [
     {
@@ -162,6 +168,7 @@ const DeployHistory = forwardRef((props: Props, ref) => {
       <CustomizeTable
         columns={columns}
         params={params}
+        update={update}
         fetchFn={getHistorysSv}
       />
     </Modal>

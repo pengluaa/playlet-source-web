@@ -1,16 +1,20 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button } from 'antd';
+import { Form, Button, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
 import CustomizeTable, { CustomizeTableColumType } from '@/components/Table';
 import TableMore from '@/components/TableMoreButton';
 import RenderState from '@/components/Render/State';
-import { DeployStatusSelect, DeployStatusTag } from '../_deployStatus';
+import {
+  DeployStatus,
+  DeployStatusSelect,
+  DeployStatusTag,
+} from '../_deployStatus';
 import CreateForm from './_createForm';
 import ProjectSelect from './_projectSelect';
 
-import { getList as getListSv } from './service';
+import { getList as getListSv, del as delSv } from './service';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
@@ -22,7 +26,11 @@ const List = () => {
     setUpdate(!update);
   };
 
-  const deleteItem = (id: number) => {};
+  const deleteItem = async (id: number) => {
+    const { error } = await delSv(id);
+    if (error) return;
+    refresh();
+  };
 
   const columns: CustomizeTableColumType<any>[] = [
     {
@@ -39,8 +47,11 @@ const List = () => {
     {
       title: '版本号',
       dataIndex: 'version',
-      width: 160,
+      width: 130,
       ellipsis: true,
+      render(value) {
+        return <Tag>v{value}</Tag>;
+      },
     },
     {
       title: '版本描述',
@@ -49,16 +60,10 @@ const List = () => {
       ellipsis: true,
     },
     {
-      title: 'md5',
-      dataIndex: 'md5',
-      width: 160,
-      ellipsis: true,
-    },
-    {
-      title: 'sha256',
-      dataIndex: 'sha256',
-      width: 160,
-      ellipsis: true,
+      title: '部署时间',
+      dataIndex: 'deployAt',
+      width: 170,
+      timeField: true,
     },
     {
       title: '是否完成',
@@ -75,6 +80,18 @@ const List = () => {
       render(value) {
         return <DeployStatusTag value={value} />;
       },
+    },
+    {
+      title: 'md5',
+      dataIndex: 'md5',
+      width: 160,
+      ellipsis: true,
+    },
+    {
+      title: 'sha256',
+      dataIndex: 'sha256',
+      width: 160,
+      ellipsis: true,
     },
     {
       title: '拒绝原因',
@@ -101,6 +118,7 @@ const List = () => {
                 id: 3,
                 text: '删除',
                 popconfirm: true,
+                disabled: (record.status as DeployStatus) === 'SUCCESS',
                 popconfirmProps: {
                   title: '确认删除？',
                   onConfirm() {

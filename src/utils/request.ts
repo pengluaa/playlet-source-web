@@ -1,4 +1,3 @@
-
 import { message } from 'antd';
 import axios, { isAxiosError, Method } from 'axios';
 
@@ -31,7 +30,7 @@ const instance = axios.create({
   responseType: 'json',
 });
 
-instance.interceptors.request.use(function (config) {
+instance.interceptors.request.use(function (config) {  
   const headers: any = getRequestHeader(config.url);
   for (const key in headers) {
     config.headers.set(key, headers[key]);
@@ -87,7 +86,7 @@ export default async function request<T = any>(
       msg: response?.message,
       data: response?.data,
     } as ResponseOk<T>;
-  }  
+  }
   if (response?.message && opts?.showErrMsg !== false) {
     message.error(response.message);
   }

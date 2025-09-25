@@ -69,39 +69,28 @@ const CreateForm = forwardRef((props: Props, ref) => {
           <ProjectSelect showDir />
         </Form.Item>
         <Form.Item label="版本号" required style={{ marginBottom: 0 }}>
-          <Space>
+          <Space size={2}>
             <Form.Item
               name={['version', 0]}
               rules={[{ required: true, message: '请输入主版本号' }]}
             >
-              <InputNumber
-                addonBefore="主"
-                min={0}
-                precision={0}
-                placeholder="请输入"
-              />
+              <InputNumber min={0} precision={0} placeholder="主版本号" />
             </Form.Item>
+
             <Form.Item
               name={['version', 1]}
               rules={[{ required: true, message: '请输入次版本号' }]}
             >
-              <InputNumber
-                addonBefore="次"
-                min={0}
-                precision={0}
-                placeholder="请输入"
-              />
+              <InputNumber min={0} precision={0} placeholder="次版本号" />
             </Form.Item>
             <Form.Item
               name={['version', 2]}
               rules={[{ required: true, message: '请输入修订版本号' }]}
             >
-              <InputNumber
-                addonBefore="修订"
-                min={0}
-                precision={0}
-                placeholder="请输入"
-              />
+              <InputNumber min={0} precision={0} placeholder="修订号" />
+            </Form.Item>
+            <Form.Item name={['version', 3]}>
+              <InputNumber min={0} precision={0} placeholder="分支号" />
             </Form.Item>
           </Space>
         </Form.Item>

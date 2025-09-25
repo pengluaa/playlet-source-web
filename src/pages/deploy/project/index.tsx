@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button, Input, TableColumnType, message } from 'antd';
+import { Form, Button, TableColumnType, message, Space, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
@@ -10,6 +10,7 @@ import CreateForm from './_createForm';
 import { getList as getListSv, del as delSv } from './service';
 import DeployHistory from './_history';
 import ProjectSelect from '../upload/_projectSelect';
+import RenderText from '@/components/Render/Text';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
@@ -48,6 +49,23 @@ const List = () => {
       ellipsis: true,
     },
     {
+      title: '最后部署项目',
+      dataIndex: 'deployItems',
+      width: 280,
+      render(items) {
+        const item = items[0];
+        if (!item) {
+          return null;
+        }
+        return (
+          <Space size={4}>
+            <RenderText timeField value={item.deployAt} />
+            <Tag color="blue">v{item.version}</Tag>
+          </Space>
+        );
+      },
+    },
+    {
       title: '服务器IP',
       dataIndex: ['server', 'host'],
       width: 160,
@@ -61,7 +79,7 @@ const List = () => {
     {
       title: '备注',
       dataIndex: 'remark',
-      width: 180,
+      width: 240,
       ellipsis: true,
     },
     {

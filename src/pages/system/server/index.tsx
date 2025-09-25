@@ -33,6 +33,7 @@ const List = () => {
     const { error } = await refreshStatusSv(id);
     if (error) return;
     message.success('操作成功');
+    refresh();
   };
 
   const columns: CustomizeTableColumType<any>[] = [
