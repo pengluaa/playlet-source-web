@@ -5,6 +5,7 @@ import CryptoJS from 'crypto-js';
 
 import { logout as logoutSv } from '@/service';
 import { getStorage, setStorage } from './utils/storage';
+import { getRandomString } from './utils/util';
 
 const AES_decrypt = CryptoJS.AES.decrypt;
 const encUtf8 = CryptoJS.enc.Utf8;
@@ -44,7 +45,7 @@ export const getCurrentMenu = (pathname?: string): MenuItem | null => {
   for (let i = 0; i < menus.length; i++) {
     const item = menus[i];
     if (item.route === pathname) {
-      return item
+      return item;
     }
   }
   return null;
@@ -75,8 +76,8 @@ const tokenKey = AES_decrypt(
   '',
 ).toString(encUtf8);
 
-const timestampKey = AES_decrypt(
-  'U2FsdGVkX18eAWNb5HFRP1FNhvvqV2qBxyfN+Ul5Ybg=',
+const trKey = AES_decrypt(
+  'U2FsdGVkX1+/AWTnD/Zg1Okf9GmVsnMgdigvXJDVEbE=',
   '',
 ).toString(encUtf8);
 
@@ -85,15 +86,14 @@ const signKey = AES_decrypt(
   '',
 ).toString(encUtf8);
 
-const signSalt = AES_decrypt(
+export const signSalt = AES_decrypt(
   'U2FsdGVkX1+SpuP6wCUJXVv78PuX2a+neunRrO4dajUyFsKPVnsACG/ekO11wGDv',
   '',
 ).toString(encUtf8);
 
-
 // 获取请求头参数
 export const getRequestHeader = (url: string = ''): ReqHeader => {
-  const timestamp = dayjs().unix().toString();
+  const tr = [dayjs().unix().toString(), getRandomString(8)].join(':');
   const index = url?.indexOf('?');
   if (index !== -1) {
     url = url.substring(0, index);
@@ -103,10 +103,9 @@ export const getRequestHeader = (url: string = ''): ReqHeader => {
   }
   return {
     [tokenKey]: getToken(),
-    [timestampKey]: timestamp,
-    [signKey]: md5(url + signSalt + timestamp),
+    [trKey]: tr,
+    [signKey]: md5(url + signSalt + tr),
   } as any;
 };
-
 
 export default globalData;

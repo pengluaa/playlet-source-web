@@ -82,6 +82,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
   return (
     <Modal
       title={title}
+      maskClosable={false}
       confirmLoading={submitLoading}
       width={600}
       open={open}
@@ -145,7 +146,11 @@ const CreateForm = forwardRef((props: Props, ref) => {
             <Select.Option value="default">默认</Select.Option>
           </Select>
         </Form.Item>
-        <Form.Item label="后端接口" name="apis">
+        <Form.Item
+          label="后端接口"
+          name="apis"
+          tooltip="*匹配单级，**匹配任意多级"
+        >
           <Select mode="tags" placeholder="请输入" />
         </Form.Item>
         <Form.Item hidden={isBtnPermission} label="前端路由" name="route">

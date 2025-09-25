@@ -10,8 +10,11 @@ export const submit = (data: any) => {
 };
 
 // 删除菜单
-export const deleteMenu = (id: string) => {
-  return request(`/system/menu/del`, { method: 'post', data: { id } });
+export const deleteMenu = (data: any) => {
+  return request(`/system/menu/del`, {
+    method: 'DELETE',
+    data,
+  });
 };
 
 export const getMenuList = () => {

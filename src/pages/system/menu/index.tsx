@@ -1,25 +1,40 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Button, Table, Card, TableColumnType, Row, Col, Tag } from 'antd';
+import {
+  Button,
+  Table,
+  Card,
+  TableColumnType,
+  Row,
+  Col,
+  Tag,
+  Modal,
+  Form,
+  Input,
+  message,
+} from 'antd';
+import md5 from 'blueimp-md5';
 import { PlusOutlined } from '@ant-design/icons';
-
 import PageHeader from '@/components/PageHeader';
 
+import TableMore from '@/components/TableMoreButton';
+import RenderState from '@/components/Render/State';
+import CreateForm from './_createForm';
+import { buildTree, deepCopy } from '@/utils/util';
+import { signSalt } from '@/common';
 import {
   getMenuList as getMenuListSv,
   deleteMenu as deleteMenuSv,
 } from './service';
-import TableMore from '@/components/TableMoreButton';
-import CreateForm from './_createForm';
-import { buildTree, deepCopy } from '@/utils/util';
-import RenderState from '@/components/Render/State';
 
 const Menu = () => {
   const [tableDatas, setTableDatas] = useState<any[]>([]);
   const [treeData, setTreeData] = useState<any[]>([]);
   const [expandKeys, setExpandKeys] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>();
+  const [openDel, setOpenDel] = useState<boolean>(false);
 
   const createRef = useRef<ModalFormRef>(null);
+  const [form] = Form.useForm();
 
   const handleCreateTreeData = (datas: MenuItem[]) => {
     datas = datas.filter((item) => item.type !== 3);
@@ -33,12 +48,31 @@ const Menu = () => {
     handleCreateTreeData(deepCopy(data));
   };
 
-  const deleteItem = async (id: string) => {
+  const deleteItem = async (values: any) => {
     setLoading(true);
-    const { error } = await deleteMenuSv(id);
+    values.confirmPwd = md5(values.confirmPwd + signSalt);
+    const { error } = await deleteMenuSv(values);
     setLoading(false);
     if (error) return;
+    message.success('删除成功');
+    setOpenDel(false);
     getMenuList();
+  };
+
+  const deleteConfirm = async () => {
+    try {
+      const values = await form.validateFields();
+      Modal.confirm({
+        type: 'warn',
+        title: '确定删除此菜单，以及其全部子菜单(如果存在)？',
+        content: '数据无法恢复，请慎重操作！',
+        onOk() {
+          deleteItem(values);
+        },
+      });
+    } catch (error) {
+      // ..
+    }
   };
 
   const expandable = {
@@ -78,7 +112,7 @@ const Menu = () => {
       dataIndex: 'state',
       width: 66,
       render(value) {
-        return <RenderState value={value} />
+        return <RenderState value={value} />;
       },
     },
     {
@@ -108,12 +142,12 @@ const Menu = () => {
               {
                 id: 3,
                 text: '删除',
-                popconfirm: true,
-                popconfirmProps: {
-                  title: '确定删除此菜单及其全部子菜单？',
-                  onConfirm() {
-                    deleteItem(value);
-                  },
+                onClick() {
+                  form.setFieldsValue({
+                    id: value,
+                    confirmPwd: void 0,
+                  });
+                  setOpenDel(true);
                 },
               },
             ]}
@@ -162,6 +196,27 @@ const Menu = () => {
       </Card>
 
       <CreateForm ref={createRef} treeData={treeData} onOk={getMenuList} />
+
+      <Modal
+        title="删除确认？"
+        open={openDel}
+        onCancel={() => setOpenDel(false)}
+        onOk={() => deleteConfirm()}
+      >
+        <Form
+          autoComplete="off"
+          form={form}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 16 }}
+        >
+          <Form.Item hidden label="id" name="id">
+            <Input autoComplete="off" placeholder="请输入" />
+          </Form.Item>
+          <Form.Item label="密码" name="confirmPwd" rules={[{ required: true }]}>
+            <Input.Password autoComplete="new-password" placeholder="请输入" />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   );
 };
