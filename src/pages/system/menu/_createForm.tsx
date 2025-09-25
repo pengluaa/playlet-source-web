@@ -113,15 +113,6 @@ const CreateForm = forwardRef((props: Props, ref) => {
           </Select>
         </Form.Item>
         <Form.Item
-          label="是否显示"
-          name="visiblele"
-          valuePropName="checked"
-          initialValue={true}
-          required
-        >
-          <Switch />
-        </Form.Item>
-        <Form.Item
           label="按钮权限"
           name="permission"
           hidden={!isBtnPermission}
@@ -155,6 +146,16 @@ const CreateForm = forwardRef((props: Props, ref) => {
         </Form.Item>
         <Form.Item hidden={isBtnPermission} label="前端路由" name="route">
           <Input placeholder="请输入" />
+        </Form.Item>
+        <Form.Item
+          hidden={isBtnPermission}
+          label="是否显示"
+          name="visiblele"
+          valuePropName="checked"
+          initialValue={true}
+          required
+        >
+          <Switch />
         </Form.Item>
         <Form.Item hidden={isBtnPermission} label="图标" name="icon">
           <Input placeholder="请输入" />
