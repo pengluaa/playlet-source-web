@@ -13,7 +13,7 @@ import Header from './Header';
 import styles from './index.less';
 import themes from '../themes/var';
 import GlobalContext from '@/mainContext';
-import { getUserInfo, checkAuth, checkNotFound } from '@/common';
+import { getUserInfo, checkAuth, checkNotFound, getToken } from '@/common';
 import {
   getPermisson as getPermissonSv,
   getFormats as getFormatsSv,
@@ -27,7 +27,7 @@ dayjs.extend(localeData);
 const { Content: AntdContent } = AntdLaoyout;
 
 const Content = () => {
-  const [globalData, setGlobalData] = useState<MainContextValue>({
+  const [mainContext, setMainContext] = useState<MainContextValue>({
     userInfo: getUserInfo(),
     permissons: [],
     formats: [],
@@ -37,39 +37,41 @@ const Content = () => {
   const pathname = location.pathname;
   const authorized = useMemo<boolean>(() => checkAuth(pathname), [pathname]);
   const notFound = useMemo<boolean>(() => checkNotFound(pathname), [pathname]);
-  
+
   const getPermisson = async () => {
     const { error, data } = await getPermissonSv();
     if (error) return;
-    globalData.permissons = data;
-    setGlobalData(Object.assign({}, globalData));
+    mainContext.permissons = data;
+    setMainContext(Object.assign({}, mainContext));
   };
 
   const getFormats = async () => {
     const { error, data } = await getFormatsSv();
     if (error) return;
-    globalData.formats = data;
-    setGlobalData(Object.assign({}, globalData));
+    mainContext.formats = data;
+    setMainContext(Object.assign({}, mainContext));
   };
 
   const getChannels = async () => {
     const { error, data } = await getChannelsSv();
     if (error) return;
-    globalData.channels = data;
-    setGlobalData(Object.assign({}, globalData));
+    mainContext.channels = data;
+    setMainContext(Object.assign({}, mainContext));
   };
 
   useEffect(() => {
-    getPermisson();
-    getFormats();
-    getChannels();
+    if (getToken()) {
+      getPermisson();
+      getFormats();
+      getChannels();
+    }
   }, []);
   if (['/login'].includes(pathname)) {
     return <Outlet />;
   }
 
   return (
-    <GlobalContext.Provider value={globalData}>
+    <GlobalContext.Provider value={mainContext}>
       <AntdLaoyout className={styles.container}>
         <Header />
         <AntdLaoyout>

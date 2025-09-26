@@ -4,7 +4,7 @@ import themes from './src/themes/var';
 
 export default defineConfig({
   npmClient: 'pnpm',
-  title: 'admin',
+  title: '平台管理',
   outputPath: 'cms',
   theme: themes,
   cssLoaderModules: {
