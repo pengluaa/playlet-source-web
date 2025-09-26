@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Menu, Layout } from 'antd';
-import globalData, { getCurrentMenu } from '@/common';
+import { globalData, getCurrentMenu } from '@/common';
 import { history } from 'umi';
 import styles from './sideBar.less';
 
@@ -46,7 +46,7 @@ export default function SideBar() {
 
     const parentIds = getParentIds(currentMenu.pid);
     const keyPath = [currentMenu.id.toString(), currentMenu.pid.toString()];
-    keyPath.push(...parentIds.map((id) => id.toString()));  
+    keyPath.push(...parentIds.map((id) => id.toString()));
     setOpenKeys(keyPath);
     setSelectedKeys(keyPath);
   };
@@ -56,6 +56,7 @@ export default function SideBar() {
       buildTree(
         globalData.menus
           .sort((a, b) => (b.sort ?? 0) - (a.sort ?? 0))
+          .filter(item => item.visible)
           .map((item) => ({
             id: item.id,
             pid: item.pid,

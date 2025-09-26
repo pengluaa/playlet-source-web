@@ -1,31 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { ConfigProvider, Layout } from 'antd';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ConfigProvider, Layout as AntdLaoyout } from 'antd';
 import { Outlet, useLocation } from 'umi';
 import dayjs from 'dayjs';
 import locale from 'antd/locale/zh_CN';
 import weekday from 'dayjs/plugin/weekday';
 import localeData from 'dayjs/plugin/localeData';
 
+import UnauthorizedPage from '@/pages/403';
+import NotFoundPage from '@/pages/404';
 import SideBar from './SideBar';
 import Header from './Header';
 import styles from './index.less';
 import themes from '../themes/var';
 import GlobalContext from '@/mainContext';
+import { getUserInfo, checkAuth, checkNotFound } from '@/common';
 import {
   getPermisson as getPermissonSv,
   getFormats as getFormatsSv,
   getChannels as getChannelsSv,
 } from '@/service';
-
 import 'dayjs/locale/zh-cn';
-import { getUserInfo } from '@/common';
 
 dayjs.extend(weekday);
 dayjs.extend(localeData);
 
-const { Content } = Layout;
+const { Content: AntdContent } = AntdLaoyout;
 
-const GContent = () => {
+const Content = () => {
   const [globalData, setGlobalData] = useState<MainContextValue>({
     userInfo: getUserInfo(),
     permissons: [],
@@ -34,7 +35,9 @@ const GContent = () => {
   });
   const location = useLocation();
   const pathname = location.pathname;
-
+  const authorized = useMemo<boolean>(() => checkAuth(pathname), [pathname]);
+  const notFound = useMemo<boolean>(() => checkNotFound(pathname), [pathname]);
+  
   const getPermisson = async () => {
     const { error, data } = await getPermissonSv();
     if (error) return;
@@ -61,28 +64,33 @@ const GContent = () => {
     getFormats();
     getChannels();
   }, []);
-
-  if (['/login', '/workspace'].includes(pathname)) {
+  if (['/login'].includes(pathname)) {
     return <Outlet />;
   }
 
   return (
     <GlobalContext.Provider value={globalData}>
-      <Layout className={styles.container}>
+      <AntdLaoyout className={styles.container}>
         <Header />
-        <Layout>
+        <AntdLaoyout>
           <SideBar />
-          <Content>
+          <AntdContent>
             <div id="main-content" className={styles.content}>
-              <Outlet />
+              {authorized ? (
+                <Outlet />
+              ) : notFound ? (
+                <NotFoundPage />
+              ) : (
+                <UnauthorizedPage />
+              )}
             </div>
-          </Content>
-        </Layout>
-      </Layout>
+          </AntdContent>
+        </AntdLaoyout>
+      </AntdLaoyout>
     </GlobalContext.Provider>
   );
 };
-export default function GLayout() {
+export default function Layout() {
   return (
     <ConfigProvider
       locale={locale}
@@ -92,7 +100,7 @@ export default function GLayout() {
         },
       }}
     >
-      <GContent />
+      <Content />
     </ConfigProvider>
   );
 }

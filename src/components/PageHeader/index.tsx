@@ -1,57 +1,68 @@
 import React from 'react';
-import styles from './index.less';
-import { Tooltip, Modal } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Tooltip, Popconfirm } from 'antd';
 import { history } from 'umi';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+
+import styles from './index.less';
+
+const ToolTip = (props: { render?: React.ReactNode }) => {
+  if (!props.render) {
+    return null;
+  }
+
+  return (
+    <Tooltip
+      styles={{
+        root: {
+          maxWidth: 500,
+        },
+      }}
+      placement="bottomLeft"
+      title={props.render}
+    >
+      <QuestionCircleOutlined />
+    </Tooltip>
+  );
+};
+const Back = (props: { show?: boolean; confirm?: boolean }) => {
+  if (!props.show) {
+    return null;
+  }
+
+  const goBack = () => {
+    history.go(-1);
+  };
+
+  if (props.confirm) {
+    return (
+      <Popconfirm title="确定要返回吗？" onConfirm={goBack}>
+        <div className={styles.backWrap}>
+          <i className="iconfont icon-icon-back"></i>
+        </div>
+      </Popconfirm>
+    );
+  }
+
+  return (
+    <div className={styles.backWrap} onClick={goBack}>
+      <i className="iconfont icon-icon-back"></i>
+    </div>
+  );
+};
+
 interface PageHeaderProps {
   title?: string;
   showback?: boolean;
   backConfirm?: boolean;
   toolTip?: React.ReactNode;
 }
+
 const PageHeader: React.FC<PageHeaderProps> = (props) => {
-  const { title, showback = false, backConfirm = false, toolTip } = props;
-  const back = () => {
-    if (backConfirm) {
-      Modal.confirm({
-        content: '确定要返回吗?',
-        onOk() {
-          history.go(-1);
-        },
-      });
-    } else {
-      history.go(-1);
-    }
-  };
-  const showTip = () => {
-    if (toolTip) {
-      return (
-        <Tooltip
-          overlayStyle={{ maxWidth: 500 }}
-          placement="bottomLeft"
-          title={toolTip}
-        >
-          <QuestionCircleOutlined className={styles.icon} />
-        </Tooltip>
-      );
-    }
-    return;
-  };
-  const showBack = () => {
-    if (showback) {
-      return (
-        <span className={styles.span} onClick={back}>
-          <i className="iconfont icon-icon-back"></i>
-        </span>
-      );
-    }
-    return;
-  };
   return (
     <div className={styles.head}>
-      {showBack()}
-      <span className={styles.title}>{title}</span>
-      {showTip()}
+      <Back show={props.showback} confirm={props.backConfirm} />
+      <div className={styles.title}>{props.title}</div>
+      <ToolTip render={props.toolTip} />
     </div>
   );
 };

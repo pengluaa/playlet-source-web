@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button, Input, DatePicker } from 'antd';
+import { Form, Button, Input, DatePicker, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
 import CustomizeTable, { CustomizeTableColumType } from '@/components/Table';
 import TableMore from '@/components/TableMoreButton';
-import CreateForm from './_createForm';
+import { Link } from 'umi';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
@@ -82,43 +82,25 @@ const List = () => {
 
   const Header = () => {
     return (
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={() => createRef.current?.add?.()}
-      >
-        新增
-      </Button>
+      <Space>
+        <Button type="primary">
+          <Link to="/example/test/child">打开子页面</Link>
+        </Button>
+      </Space>
     );
   };
 
   return (
     <>
-      <PageHeader title="示例" />
-      <FormSearch
-        // colNum={4}
-        initialValues={{ name3: '3', name6: '6' }}
-        onChange={setSearchValues}
-      >
+      <PageHeader title="测试" />
+      <FormSearch>
         <Form.Item label="名称1" name="name1">
           <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item label="名称2" name="name2">
           <DatePicker.RangePicker showTime={false} />
         </Form.Item>
-        <Form.Item
-          label="名称3"
-          name="name3"
-        >
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称4" name="name4">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称5" name="name5">
-          <Input placeholder="请输入" />
-        </Form.Item>
-        <Form.Item label="名称6" name="name6">
+        <Form.Item label="名称3" name="name3">
           <Input placeholder="请输入" />
         </Form.Item>
       </FormSearch>
@@ -129,8 +111,6 @@ const List = () => {
         columns={columns}
         fetchFn={getList}
       />
-
-      <CreateForm ref={createRef} onOk={refresh} />
     </>
   );
 };

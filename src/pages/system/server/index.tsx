@@ -28,6 +28,7 @@ const List = () => {
     const { error } = await delSv(id);
     if (error) return;
     message.success('删除成功');
+    refresh();
   };
   const refreshConn = async (id: number) => {
     const { error } = await refreshStatusSv(id);

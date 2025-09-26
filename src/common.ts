@@ -1,4 +1,4 @@
-import { IRoute, history } from 'umi';
+import { history } from 'umi';
 import dayjs from 'dayjs';
 import md5 from 'blueimp-md5';
 import CryptoJS from 'crypto-js';
@@ -12,7 +12,7 @@ const encUtf8 = CryptoJS.enc.Utf8;
 const TOKEN_KEY = 'TOKEN';
 const USER_INFO_KEY = 'USER_INFO';
 
-const globalData: GlobalData = {
+export const globalData: GlobalData = {
   TOKEN: getStorage(TOKEN_KEY) || '',
   menus: [],
   routes: [],
@@ -24,6 +24,10 @@ export const getMenus = () => {
 
 export const setMenus = (menus: MenuItem[]) => {
   globalData.menus = menus;
+};
+
+export const setRoutes = (routes: string[]) => {
+  globalData.routes = routes;
 };
 
 export const setToken = (token: string): void => {
@@ -107,5 +111,13 @@ export const getRequestHeader = (url: string = ''): ReqHeader => {
     [signKey]: md5(url + signSalt + tr),
   } as any;
 };
+/** 检查是否有权限 */
+export const checkAuth = (pathname?: string): boolean => {
+  if (!pathname || pathname === '/') return true;
+  return globalData.menus.some((item) => item.route === pathname);
+};
 
-export default globalData;
+/** 检查是否404 */
+export const checkNotFound = (pathname: string): boolean => {
+  return !globalData.routes.includes(pathname);
+};

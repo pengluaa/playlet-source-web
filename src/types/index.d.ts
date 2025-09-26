@@ -34,7 +34,7 @@ interface Format {
 
 /** 全局变量 */
 interface GlobalData {
-  routes: IRoute[];
+  routes: string[];
   menus: MenuItem[];
   TOKEN: string;
 }
@@ -118,6 +118,7 @@ interface MenuItem {
   type: number;
   icon?: string;
   name: string;
+  visible: boolean;
   route?: string;
   permission?: PermissionType;
   sort?: number;

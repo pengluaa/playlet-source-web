@@ -18,9 +18,9 @@ export default defineConfig({
   },
   conventionRoutes: {
     exclude: [
-      /\/components\//, // components
-      /^_.*/, // "_example"
-      /\/_.*/, //another/_example
+      /\/components\//, // components目录
+      /^_.*/, //  以下划线开头 eg: _example.tsx 
+      /\/_.*/, // 目录下以下划线开头 eg: another/_example.tsx
     ],
   },
 });

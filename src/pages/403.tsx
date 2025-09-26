@@ -1,7 +1,7 @@
-import { Result, Button } from 'antd';
+import { Result } from 'antd';
 import { GoHome } from './404';
 
-export default function () {
+export default function UnauthorizedPage() {
   return (
     <Result
       status="403"

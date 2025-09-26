@@ -1,17 +1,13 @@
-import React, { useRef, useState } from 'react';
-import { Form, Button, Input, DatePicker } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
+import { Form, Input, DatePicker } from 'antd';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
 import CustomizeTable, { CustomizeTableColumType } from '@/components/Table';
 import TableMore from '@/components/TableMoreButton';
-import CreateForm from './_createForm';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
   const [update, setUpdate] = useState<boolean>(false);
-
-  const createRef = useRef<ModalFormRef>(null);
 
   const refresh = () => {
     setUpdate(!update);
@@ -49,20 +45,6 @@ const List = () => {
           <TableMore
             buttons={[
               {
-                id: 1,
-                text: '编辑',
-                onClick() {
-                  createRef.current?.edit?.(record);
-                },
-              },
-              {
-                id: 2,
-                text: '查看',
-                onClick() {
-                  createRef.current?.view?.(record);
-                },
-              },
-              {
                 id: 3,
                 text: '删除',
                 popconfirm: true,
@@ -80,36 +62,17 @@ const List = () => {
     },
   ];
 
-  const Header = () => {
-    return (
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        onClick={() => createRef.current?.add?.()}
-      >
-        新增
-      </Button>
-    );
-  };
-
   return (
     <>
-      <PageHeader title="示例" />
-      <FormSearch
-        // colNum={4}
-        initialValues={{ name3: '3', name6: '6' }}
-        onChange={setSearchValues}
-      >
+      <PageHeader showback backConfirm title="子页面" toolTip="hello world" />
+      <FormSearch onChange={setSearchValues}>
         <Form.Item label="名称1" name="name1">
           <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item label="名称2" name="name2">
           <DatePicker.RangePicker showTime={false} />
         </Form.Item>
-        <Form.Item
-          label="名称3"
-          name="name3"
-        >
+        <Form.Item label="名称3" name="name3">
           <Input placeholder="请输入" />
         </Form.Item>
         <Form.Item label="名称4" name="name4">
@@ -124,13 +87,10 @@ const List = () => {
       </FormSearch>
       <CustomizeTable
         update={update}
-        headerContent={<Header />}
         params={searchValues}
         columns={columns}
         fetchFn={getList}
       />
-
-      <CreateForm ref={createRef} onOk={refresh} />
     </>
   );
 };

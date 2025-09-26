@@ -150,7 +150,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
         <Form.Item
           hidden={isBtnPermission}
           label="是否显示"
-          name="visiblele"
+          name="visible"
           valuePropName="checked"
           initialValue={true}
           required

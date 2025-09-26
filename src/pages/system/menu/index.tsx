@@ -18,7 +18,9 @@ import PageHeader from '@/components/PageHeader';
 
 import TableMore from '@/components/TableMoreButton';
 import RenderState from '@/components/Render/State';
+import RenderBool from '@/components/Render/Bool';
 import CreateForm from './_createForm';
+
 import { buildTree, deepCopy } from '@/utils/util';
 import { signSalt } from '@/common';
 import {
@@ -106,6 +108,14 @@ const Menu = () => {
       width: 88,
       title: '排序',
       dataIndex: 'sort',
+    },
+    {
+      width: 88,
+      title: '是否显示',
+      dataIndex: 'visible',
+      render(value) {
+        return <RenderBool value={value} />;
+      },
     },
     {
       title: '状态',
@@ -212,7 +222,11 @@ const Menu = () => {
           <Form.Item hidden label="id" name="id">
             <Input autoComplete="off" placeholder="请输入" />
           </Form.Item>
-          <Form.Item label="密码" name="confirmPwd" rules={[{ required: true }]}>
+          <Form.Item
+            label="密码"
+            name="confirmPwd"
+            rules={[{ required: true }]}
+          >
             <Input.Password autoComplete="new-password" placeholder="请输入" />
           </Form.Item>
         </Form>
