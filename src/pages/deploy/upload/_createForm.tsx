@@ -85,11 +85,14 @@ const CreateForm = forwardRef((props: Props, ref) => {
             </Form.Item>
             <Form.Item
               name={['version', 2]}
-              rules={[{ required: true, message: '请输入修订版本号' }]}
+              rules={[{ required: true, message: '请输入修订号' }]}
             >
               <InputNumber min={0} precision={0} placeholder="修订号" />
             </Form.Item>
-            <Form.Item name={['version', 3]}>
+            <Form.Item
+              name={['version', 3]}
+              rules={[{ required: true, message: '请输入分支号' }]}
+            >
               <InputNumber min={0} precision={0} placeholder="分支号" />
             </Form.Item>
           </Space>
