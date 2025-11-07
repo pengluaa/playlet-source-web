@@ -108,7 +108,7 @@ const List = () => {
     {
       title: '操作',
       dataIndex: 'id',
-      width: 125,
+      width: 88,
       fixed: 'right',
       render(value, record) {
         return (

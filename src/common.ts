@@ -6,6 +6,7 @@ import CryptoJS from 'crypto-js';
 import { logout as logoutSv } from '@/service';
 import { getStorage, setStorage } from './utils/storage';
 import { getRandomString } from './utils/util';
+import request from './utils/request';
 
 const AES_decrypt = CryptoJS.AES.decrypt;
 const encUtf8 = CryptoJS.enc.Utf8;
@@ -31,11 +32,11 @@ export const setRoutes = (routes: string[]) => {
 };
 
 export const setToken = (token: string): void => {
-  setStorage(TOKEN_KEY, token);
   globalData.TOKEN = token;
+  setStorage(TOKEN_KEY, token);
 };
 
-export const setUserInfo = (user: UserInfo) => {
+export const setUserInfo = (user?: UserInfo) => {
   setStorage(USER_INFO_KEY, user);
 };
 

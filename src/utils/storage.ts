@@ -17,9 +17,6 @@ export const getStorage = <T>(key: string, sesseion = false): T | null => {
       return value as T;
     }
     const obj = JSON.parse(value);
-    // if (obj.type === 'Number') {
-    //   return Number(obj.value);
-    // }
     return obj.value;
   } catch (error) {
     return null;
@@ -35,10 +32,9 @@ export const getStorage = <T>(key: string, sesseion = false): T | null => {
 export const setStorage = (key: string, value: any, sesseion = false) => {
   try {
     const storage = getStorageFn(sesseion);
-    const type = getObjectType(value);
     const data = JSON.stringify({
-      type: type,
-      value: value,
+      type: getObjectType(value) ?? null,
+      value: value ?? null,
     });
     storage.setItem(key, data);
   } catch (error) {

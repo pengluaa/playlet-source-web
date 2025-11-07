@@ -60,8 +60,6 @@ function Editor(props: EditorProps) {
     async customUpload(file: File, insertFn: InsertFnType) {
       upload({
         id: '1',
-        name: file.name,
-        size: file.size,
         file: file,
         onSuccess(resp) {
           if(resp.error) return;
@@ -76,8 +74,6 @@ function Editor(props: EditorProps) {
     async customUpload(file: File, insertFn: InsertFnType) {
       upload({
         id: '2',
-        name: file.name,
-        size: file.size,
         file: file,
         onSuccess(resp) {
           if (resp.error) return;

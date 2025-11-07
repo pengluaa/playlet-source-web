@@ -3,6 +3,7 @@ import axios, { isAxiosError, Method } from 'axios';
 
 import { getRequestHeader } from '../common';
 import { logout } from '../common';
+import { history } from 'umi';
 
 type ResultCode = number;
 interface ServerResponse<T = any> {
@@ -21,6 +22,8 @@ interface RequestOptins {
 
 export const SUCCESS_CODE: ResultCode = 0;
 export const UNAUTHORIZED: ResultCode = 40001;
+export const OTP_INIT_REQUIRED: ResultCode = 10004;
+export const OTP_AUTH_REQUIRED: ResultCode = 10005;
 const TIMEOUT = 60e3; // time out
 const DEFAULT_ERR_TEXT = '请求发生错误'; // err text
 
@@ -30,7 +33,7 @@ const instance = axios.create({
   responseType: 'json',
 });
 
-instance.interceptors.request.use(function (config) {  
+instance.interceptors.request.use(function (config) {
   const headers: any = getRequestHeader(config.url);
   for (const key in headers) {
     config.headers.set(key, headers[key]);
@@ -92,6 +95,11 @@ export default async function request<T = any>(
   }
   if (response.code === UNAUTHORIZED) {
     logout();
+  } else if (response.code === OTP_INIT_REQUIRED) {
+    history.replace('/2fa');
+  } else if (response.code === OTP_AUTH_REQUIRED) {
+    // 为非法操作，统一跳到登录也(正常情况需要验证后才能登录)
+    history.replace('/login');
   }
   return {
     error: true,

@@ -60,13 +60,14 @@ const Content = () => {
   };
 
   useEffect(() => {
-    if (getToken()) {
+    if (mainContext.userInfo?.status === 'ACTIVE') {
       getPermisson();
       getFormats();
       getChannels();
     }
   }, []);
-  if (['/login'].includes(pathname)) {
+
+  if (['/login', '/2fa'].includes(pathname)) {
     return <Outlet />;
   }
 

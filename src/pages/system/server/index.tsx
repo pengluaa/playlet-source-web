@@ -46,7 +46,7 @@ const List = () => {
     {
       title: '名称',
       dataIndex: 'name',
-      width: 120,
+      width: 200,
     },
     {
       title: '服务器地址',
