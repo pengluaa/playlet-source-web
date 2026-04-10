@@ -25,8 +25,9 @@ export default function ProjectSelect(props: Props) {
 
   return (
     <Select
-      showSearch
-      optionFilterProp="name"
+      showSearch={{
+        optionFilterProp: 'name',
+      }}
       disabled={props.disabled}
       mode={props.mode}
       value={props.value}

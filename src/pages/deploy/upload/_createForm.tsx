@@ -59,14 +59,14 @@ const CreateForm = forwardRef((props: Props, ref) => {
     <Modal
       title={title}
       confirmLoading={submitLoading}
-      width={600}
+      width={650}
       open={open}
       onCancel={onCancel}
       onOk={submit}
     >
       <Form form={form} wrapperCol={{ span: 16 }} labelCol={{ span: 5 }}>
-        <Form.Item label="项目" name="projectId" rules={[{ required: true }]}>
-          <ProjectSelect showDir />
+        <Form.Item label="项目" name="projectIds" rules={[{ required: true }]}>
+          <ProjectSelect showDir mode='multiple' />
         </Form.Item>
         <Form.Item label="版本号" required style={{ marginBottom: 0 }}>
           <Space size={2}>
