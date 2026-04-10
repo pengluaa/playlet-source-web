@@ -27,3 +27,11 @@ export const del = (id: number) => {
     data: { id },
   });
 };
+
+export const redeploy = (id: number) => {
+  return request({
+    url: '/deploy/upload/redeploy',
+    method: 'post',
+    data: { id },
+  });
+};

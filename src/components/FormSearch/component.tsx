@@ -14,7 +14,7 @@ export const TreeItem = (props: any) => {
 
   return (
     <CheckboxGroup onChange={checkChange} defaultValue={defaultValue}>
-      <Space direction="vertical">
+      <Space orientation="vertical">
         {options?.map((item: any, index: number) => (
           <Checkbox key={index} value={index}>
             {item.props?.label}

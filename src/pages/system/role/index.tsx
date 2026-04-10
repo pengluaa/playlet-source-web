@@ -1,5 +1,13 @@
 import React, { useRef, useState } from 'react';
-import { Modal, Form, Button, Input, TableColumnType, Spin, message } from 'antd';
+import {
+  Modal,
+  Form,
+  Button,
+  Input,
+  TableColumnType,
+  Spin,
+  message,
+} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
@@ -149,7 +157,8 @@ const Role = () => {
       <CreateForm ref={createRef} onOk={refresh} />
       <Modal
         title="权限设置"
-        maskClosable={false}
+        mask={{ closable: false }}
+        destroyOnHidden
         open={visibleAuth}
         confirmLoading={loading}
         onOk={submitAuth}

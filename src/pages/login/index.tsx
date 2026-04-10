@@ -110,6 +110,7 @@ const Login = () => {
                 prefix={<UserOutlined />}
                 placeholder="请输入账号"
                 autoComplete="off"
+                autoFocus
               />
             </Form.Item>
             <Form.Item
@@ -163,7 +164,8 @@ const Login = () => {
       <Modal
         title="2FA认证"
         width={450}
-        maskClosable={false}
+        destroyOnHidden
+        mask={{ closable: false }}
         open={open2FA}
         okButtonProps={{ loading: loading2 }}
         okText="验证"
@@ -179,7 +181,7 @@ const Login = () => {
             name="code"
             rules={[{ required: true }]}
           >
-            <Input placeholder="请输入" />
+            <Input autoFocus placeholder="请输入" />
           </Form.Item>
         </Form>
       </Modal>

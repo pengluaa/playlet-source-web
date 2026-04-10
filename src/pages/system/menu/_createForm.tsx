@@ -82,7 +82,8 @@ const CreateForm = forwardRef((props: Props, ref) => {
   return (
     <Modal
       title={title}
-      maskClosable={false}
+      mask={{ closable: false }}
+      destroyOnHidden
       confirmLoading={submitLoading}
       width={600}
       open={open}

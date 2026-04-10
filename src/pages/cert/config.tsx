@@ -1,5 +1,14 @@
 import { useEffect, useState } from 'react';
-import { Button, Card, Form, Input, InputNumber, message, Switch } from 'antd';
+import {
+  Button,
+  Card,
+  Form,
+  Input,
+  InputNumber,
+  message,
+  Space,
+  Switch,
+} from 'antd';
 import PageHeader from '@/components/PageHeader';
 
 import { getConf as getConfSv, submit as submitSv } from './service';
@@ -57,12 +66,14 @@ const Config = () => {
             name="advance"
             rules={[{ required: true }]}
           >
-            <InputNumber
-              min={1}
-              addonBefore="过期前"
-              addonAfter="天"
-              placeholder="请输入"
-            />
+            <Space.Compact block>
+              <Space.Addon>过期前</Space.Addon>
+              <InputNumber
+                min={1}
+                placeholder="请输入"
+              />
+              <Space.Addon>天</Space.Addon>
+            </Space.Compact>
           </Form.Item>
           <Form.Item label={null} wrapperCol={{ offset: 6 }}>
             <Button type="primary" htmlType="submit" loading={submitLoading}>

@@ -309,16 +309,16 @@ const Popup: React.FC<PopupProps> = (props) => {
       open={visible}
       title={props.title || '导入数据'}
       okText={props.okText || '导入'}
-      maskClosable={false}
+      mask={{ closable: false }}
+      destroyOnHidden
       confirmLoading={loading}
       onCancel={() => closeModal()}
       onOk={() => importHandle()}
-      destroyOnClose
     >
       <Form form={form} labelCol={props.labelCol} wrapperCol={props.wrapperCol}>
         {props?.formChildren}
       </Form>
-      <Space className={styles.container} direction="vertical" size={10}>
+      <Space className={styles.container} orientation="vertical" size={10}>
         <ReadFile
           accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,.xls,.xlsx"
           onChange={readFileChange}
@@ -369,8 +369,8 @@ const Popup: React.FC<PopupProps> = (props) => {
               importError
                 ? 'exception'
                 : progerss === 100
-                ? 'success'
-                : 'active'
+                  ? 'success'
+                  : 'active'
             }
             strokeLinecap="butt"
             percent={progerss}

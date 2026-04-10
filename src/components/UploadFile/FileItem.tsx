@@ -125,7 +125,7 @@ const FileItem = (props: Props) => {
                 size={4}
                 status="active"
                 strokeColor="#3361FF"
-                trailColor="#DDDDDD"
+                railColor="#DDDDDD"
                 percent={file.progress}
               />
             )}

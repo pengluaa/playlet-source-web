@@ -58,7 +58,7 @@ const Content = (props: ContentProps) => {
 
   return (
     <>
-      <Space direction="vertical">
+      <Space orientation="vertical">
         <Link to="/">
           <Button block type="text">
             首页
@@ -74,7 +74,7 @@ const Content = (props: ContentProps) => {
       <Drawer
         title="修改密码"
         open={visible}
-        width={462}
+        size={462}
         onClose={() => setVisible(false)}
         extra={
           <Button type="primary" onClick={() => modifyPwd()} loading={loading}>

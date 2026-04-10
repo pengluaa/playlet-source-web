@@ -29,15 +29,15 @@ const statusMap: { [keyof in DeployStatus]: DeployStatusItem } = {
   },
   CONNECT_AUTH_ERR: {
     text: '连接认证错误',
-    color: 'red-inverse',
+    color: 'red',
   },
   CONNECT_TIMEOUT: {
     text: '连接超时',
-    color: 'red-inverse',
+    color: 'red',
   },
   CONNECT_FAIL: {
     text: '连接失败',
-    color: 'red-inverse',
+    color: 'red',
   },
   SUCCESS: {
     text: '部署成功',
@@ -64,7 +64,7 @@ const statusOptions: DeployStatusOption[] = Object.keys(statusMap).map((k) => {
 export const DeployStatusTag = (props: { value: DeployStatus | null }) => {
   const { value } = props;
   if (!value) return;
-  return <Tag color={statusMap[value].color}>{statusMap[value].text}</Tag>;
+  return <Tag color={statusMap[value].color} variant='solid'>{statusMap[value].text}</Tag>;
 };
 
 export const DeployStatusSelect = (props: FormItemChildProps<string>) => {

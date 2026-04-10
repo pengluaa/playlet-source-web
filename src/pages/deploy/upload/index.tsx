@@ -14,7 +14,11 @@ import {
 import CreateForm from './_createForm';
 import ProjectSelect from './_projectSelect';
 
-import { getList as getListSv, del as delSv } from './service';
+import {
+  getList as getListSv,
+  del as delSv,
+  redeploy as redeploySv,
+} from './service';
 
 const List = () => {
   const [searchValues, setSearchValues] = useState<any>({});
@@ -28,6 +32,12 @@ const List = () => {
 
   const deleteItem = async (id: number) => {
     const { error } = await delSv(id);
+    if (error) return;
+    refresh();
+  };
+
+  const redeploy = async (id: number) => {
+    const { error } = await redeploySv(id);
     if (error) return;
     refresh();
   };
@@ -108,9 +118,10 @@ const List = () => {
     {
       title: '操作',
       dataIndex: 'id',
-      width: 88,
+      width: 130,
       fixed: 'right',
       render(value, record) {
+        const status = record.status as DeployStatus;
         return (
           <TableMore
             buttons={[
@@ -118,11 +129,29 @@ const List = () => {
                 id: 3,
                 text: '删除',
                 popconfirm: true,
-                disabled: (record.status as DeployStatus) === 'SUCCESS',
+                disabled: status === 'SUCCESS',
                 popconfirmProps: {
                   title: '确认删除？',
                   onConfirm() {
                     deleteItem(value);
+                  },
+                },
+              },
+              {
+                id: 4,
+                text: '重新部署',
+                hidden: !(
+                  [
+                    'CONNECT_AUTH_ERR',
+                    'CONNECT_FAIL',
+                    'CONNECT_TIMEOUT',
+                  ] as DeployStatus[]
+                ).includes(status),
+                popconfirm: true,
+                popconfirmProps: {
+                  title: '确认重新部署？',
+                  onConfirm() {
+                    redeploy(value);
                   },
                 },
               },

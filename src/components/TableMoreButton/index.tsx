@@ -122,7 +122,7 @@ const TableMore: React.FC<TableMoreProps> = (props) => {
   return (
     <Space style={{ width: '100%', justifyContent: 'center' }} size={10}>
       {/* 显示按钮 */}
-      <Space className={styles.tableButton} direction="horizontal" size={10}>
+      <Space className={styles.tableButton} orientation="horizontal" size={10}>
         {buttons?.map((item) => (
           <TableMoreButton key={item.id} button={item} />
         ))}

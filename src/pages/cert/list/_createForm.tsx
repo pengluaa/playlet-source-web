@@ -1,5 +1,5 @@
 import { useImperativeHandle, useState, forwardRef } from 'react';
-import { Form, Input, Modal, message } from 'antd';
+import { Form, Input, Modal, Space, message } from 'antd';
 
 import { submit as submitSv } from './service';
 
@@ -71,7 +71,12 @@ const CreateForm = forwardRef((props: Props, ref) => {
       onCancel={onCancel}
       onOk={submit}
     >
-      <Form form={form} disabled={view} wrapperCol={{ span: 16 }} labelCol={{ span: 4 }}>
+      <Form
+        form={form}
+        disabled={view}
+        wrapperCol={{ span: 16 }}
+        labelCol={{ span: 4 }}
+      >
         <Form.Item label="id" name="id" hidden>
           <Input placeholder="请输入" />
         </Form.Item>
@@ -81,7 +86,10 @@ const CreateForm = forwardRef((props: Props, ref) => {
           tooltip="example.com，example.com:8887"
           rules={[{ required: true }]}
         >
-          <Input addonBefore="https://" placeholder="请输入" />
+          <Space.Compact>
+            <Space.Addon>https://</Space.Addon>
+            <Input placeholder="请输入" />
+          </Space.Compact>
         </Form.Item>
         <Form.Item label="备注" name="remark">
           <Input placeholder="请输入" />

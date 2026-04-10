@@ -130,7 +130,7 @@ const SubsetDrawer = forwardRef((props: Props, ref) => {
   return (
     <Drawer
       title="子集管理"
-      width={960}
+      size={960}
       open={open}
       loading={loading}
       onClose={() => setOpen(false)}

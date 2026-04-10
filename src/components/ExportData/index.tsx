@@ -225,9 +225,9 @@ const Popup = (props: PopupProps) => {
         title="导出数据"
         onOk={() => setDownload(true)}
         onCancel={() => closeModal()}
-        maskClosable={false}
+        mask={{closable: false}}
+        destroyOnHidden
         footer={<Footer />}
-        destroyOnClose
       >
         <Form labelCol={{ span: 6 }} initialValues={initialValues} form={form}>
           <Form.Item noStyle hidden={download}>
