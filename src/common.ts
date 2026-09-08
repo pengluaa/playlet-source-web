@@ -1,17 +1,15 @@
 import { history } from 'umi';
 import dayjs from 'dayjs';
 import md5 from 'blueimp-md5';
-import CryptoJS from 'crypto-js';
 
 import { logout as logoutSv } from '@/service';
 import { getStorage, setStorage } from './utils/storage';
 import { getRandomString } from './utils/util';
-import request from './utils/request';
 
-const AES_decrypt = CryptoJS.AES.decrypt;
-const encUtf8 = CryptoJS.enc.Utf8;
 const TOKEN_KEY = 'TOKEN';
 const USER_INFO_KEY = 'USER_INFO';
+
+export const signSalt = 'Xq7xe9e3rQMu8hTV';
 
 export const globalData: GlobalData = {
   TOKEN: getStorage(TOKEN_KEY) || '',
@@ -76,25 +74,6 @@ export const getToken = (): string => {
   return globalData.TOKEN;
 };
 
-const tokenKey = AES_decrypt(
-  'U2FsdGVkX18x60AcSULZO/pa4QSN74COM5CgeK5Azuo=',
-  '',
-).toString(encUtf8);
-
-const trKey = AES_decrypt(
-  'U2FsdGVkX1+/AWTnD/Zg1Okf9GmVsnMgdigvXJDVEbE=',
-  '',
-).toString(encUtf8);
-
-const signKey = AES_decrypt(
-  'U2FsdGVkX19qpQ31yHY3wngS8EG8SKVDC/Isq4gcFW0=',
-  '',
-).toString(encUtf8);
-
-export const signSalt = AES_decrypt(
-  'U2FsdGVkX1+SpuP6wCUJXVv78PuX2a+neunRrO4dajUyFsKPVnsACG/ekO11wGDv',
-  '',
-).toString(encUtf8);
 
 // 获取请求头参数
 export const getRequestHeader = (url: string = ''): ReqHeader => {
@@ -107,9 +86,9 @@ export const getRequestHeader = (url: string = ''): ReqHeader => {
     url = '/' + url;
   }
   return {
-    [tokenKey]: getToken(),
-    [trKey]: tr,
-    [signKey]: md5(url + signSalt + tr),
+    token: getToken(),
+    tr: tr,
+    sign: md5(url + signSalt + tr),
   } as any;
 };
 /** 检查是否有权限 */

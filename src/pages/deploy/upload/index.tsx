@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Form, Button, Tag } from 'antd';
+import { Form, Button, Tag, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import PageHeader from '@/components/PageHeader';
 import FormSearch from '@/components/FormSearch';
@@ -178,6 +178,9 @@ const List = () => {
     <>
       <PageHeader title="上传项目" />
       <FormSearch onChange={setSearchValues}>
+        <Form.Item label="项目名称" name="name">
+          <Input placeholder='请输入' />
+        </Form.Item>
         <Form.Item label="项目" name="projectId">
           <ProjectSelect />
         </Form.Item>

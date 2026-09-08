@@ -6,7 +6,9 @@ export default defineConfig({
   npmClient: 'pnpm',
   title: '平台管理',
   outputPath: 'cms',
+  hash: true,
   theme: themes,
+  esbuildMinifyIIFE: true,
   cssLoaderModules: {
     exportLocalsConvention: 'camelCase',
   },
