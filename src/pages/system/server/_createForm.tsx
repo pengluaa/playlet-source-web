@@ -98,7 +98,7 @@ const CreateForm = forwardRef((props: Props, ref) => {
           name="password"
           rules={[{ required: type === 'add' }]}
         >
-          <Input placeholder="请输入" />
+          <Input.TextArea rows={2} placeholder="请输入" />
         </Form.Item>
       </Form>
     </Modal>
